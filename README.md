@@ -42,3 +42,64 @@ Sigue estos pasos para levantar el entorno de desarrollo local:
    ```bash
    git clone [https://github.com/tu-usuario/frontuari-web.git](https://github.com/tu-usuario/frontuari-web.git)
    cd frontuari-web
+
+2. **Instalar dependencias:**
+
+    ```bash
+    npm install
+
+3. **Ejecutar el servidor de desarrollo:**
+
+    ```bash
+    npm run dev
+
+El sitio estará disponible en http://localhost:3000. Cualquier cambio en el código se reflejará automáticamente (Hot Reloading).
+
+## 📦 Construcción para Producción (Deploy)
+
+Para compilar el proyecto y prepararlo para un entorno de producción (ya sea en plataformas como Vercel o en un servidor propio con PM2/Docker):
+
+1. **Generar el build optimizado:**
+
+    ```bash
+    npm run build
+
+Este comando compila la aplicación y genera la carpeta .next con los recursos estáticos y de servidor optimizados.
+
+2. **Iniciar el servidor de producción:**
+
+    ```bash
+    npm start
+    
+3. **Análisis de código (Linter):**
+
+    ```bash
+    npm run lint
+
+Útil para ejecutar antes de hacer un commit y asegurar la calidad del código.
+
+## 📁 Estructura Principal del Proyecto
+
+    frontuari-web/
+    ├── app/                  # Directorio principal del App Router de Next.js
+    │   ├── globals.css       # Estilos globales y directivas de Tailwind
+    │   ├── layout.tsx        # Estructura principal del documento (HTML, Body, Meta SEO)
+    │   └── page.tsx          # Componente principal de la Landing Page
+    ├── public/               # Imágenes estáticas y recursos públicos
+    ├── tailwind.config.cjs   # Sistema de diseño, paleta de colores y tipografía
+    └── package.json          # Configuración de dependencias y scripts
+
+## 🤝 Contribución
+
+Si eres parte del equipo de desarrollo y deseas contribuir:
+
+Crea una nueva rama a partir de main (git checkout -b feature/nueva-seccion).
+
+Realiza tus cambios y haz commits descriptivos.
+
+Asegúrate de correr npm run build localmente para validar que no existan errores de compilación.
+
+Abre un Pull Request para revisión.
+
+Frontuari, C.A. | Araure, Portuguesa, Venezuela.
+Innovación y Compromiso Tecnológico.
