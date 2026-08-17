@@ -1,39 +1,78 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
-  Menu, X, Server, Smartphone, 
-  LineChart, Database, ShieldCheck, 
-  Lightbulb, Users, ArrowRight 
+import {
+  Menu, X, Server, Smartphone,
+  LineChart, Database, ShieldCheck,
+  Lightbulb, Users, ArrowRight
 } from 'lucide-react';
+
+// IMAGENES 
+import logoFrontuari from '../assets/images/icons/Logo-Frontuari.png';
+import logoOpenSource from '../assets/images/icons/opensource.png';
+import logoCombinado from '../assets/images/icons/Logo-Frontuari-Datacomm.png';
+import bannerNosotros from '../assets/images/banners/banner-nosotros.jpg';
+import nombreFrontuari from '../assets/images/nombre-frontuari.jpg';
+
+
+// LOGOS (empresas)
+import logoCoposa from '../assets/images/enterprises/coposa.png';
+import logoAnca from '../assets/images/enterprises/anca.png';
+import logoPorcina from '../assets/images/enterprises/porcina.png';
+import logoArichuna from '../assets/images/enterprises/arichuna.png';
+import logoLasPlumas from '../assets/images/enterprises/las-plumas.png';
+import logoTanapo from '../assets/images/enterprises/tanapo.png';
+import logoCovencauchos from '../assets/images/enterprises/convecauchos.png';
+import logoSiloamazo from '../assets/images/enterprises/siloamazo.png';
+import logoBiogene from '../assets/images/enterprises/biogene.png';
+import logoMary from '../assets/images/enterprises/mary.png';
+import logoPolar from '../assets/images/enterprises/Empresas-polar.png';
+import logoBio from '../assets/images/enterprises/biomercados.png';
 
 export default function FrontuariLanding() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // Lista de empresas colaboradoras
+  const enterpriseLogos = [
+    { name: 'Coposa', src: logoCoposa },
+    { name: 'ANCA', src: logoAnca },
+    { name: 'Porcina', src: logoPorcina },
+    { name: 'Arichuna', src: logoArichuna },
+    { name: 'Las Plumas', src: logoLasPlumas },
+    { name: 'Tanapo', src: logoTanapo },
+    { name: 'Covencaucho', src: logoCovencauchos },
+    { name: 'Siloamazo', src: logoSiloamazo },
+    { name: 'BioGene', src: logoBiogene },
+    { name: 'Mary', src: logoMary },
+    { name: 'Polar', src: logoPolar },
+    { name: 'Biomercados', src: logoBio },
+  ];
+
   return (
     <div className="min-h-screen bg-white selection:bg-primary selection:text-white">
-      
+
       {/* 1. HEADER & NAVIGATION */}
       <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-complementary/20 transition-all">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex items-center justify-between h-24"> {/* h-24 asegura padding generoso "20x" */}
-            
+        <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 sm:h-20 md:h-24 gap-4">
+
             {/* Logo Area */}
-            <div className="flex-shrink-0 cursor-pointer">
-              <span className="font-heading font-bold text-3xl tracking-tight text-primary">
-                Frontuari
-              </span>
-            </div>
+            <img
+              decoding="async"
+              className="h-4 sm:h-6 md:h-7 w-auto shrink-0 object-contain my-auto"
+              src={logoFrontuari.src}
+              alt="frontuari"
+            />
 
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-10">
+            <nav className="hidden md:flex items-center space-x-6 lg:space-x-10">
               <a href="#inicio" className="text-secondary hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide">Inicio</a>
               <a href="#nosotros" className="text-secondary hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide">Nosotros</a>
               <a href="#servicios" className="text-secondary hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide">Servicios</a>
               <a href="#casos" className="text-secondary hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide">Casos de Éxito</a>
-              
-              <button 
-                className="bg-primary hover:bg-primary-hover text-white px-6 py-3 rounded-md font-bold transition-all transform hover:-translate-y-0.5 shadow-md"
+
+              <button
+                className="bg-primary hover:bg-primary-hover text-white px-5 py-2.5 lg:px-6 lg:py-3 rounded-md font-bold transition-all transform hover:-translate-y-0.5 shadow-md text-sm"
                 aria-label="Contactar a Frontuari"
               >
                 Contáctanos
@@ -42,9 +81,9 @@ export default function FrontuariLanding() {
 
             {/* Mobile Menu Button */}
             <div className="md:hidden">
-              <button 
+              <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-secondary p-2"
+                className="text-secondary p-2 focus:outline-none"
                 aria-expanded={isMenuOpen}
                 aria-label="Abrir menú de navegación"
               >
@@ -56,12 +95,12 @@ export default function FrontuariLanding() {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="md:hidden bg-white border-t border-complementary/20 absolute w-full shadow-lg">
+          <div className="md:hidden bg-white border-b border-complementary/20 absolute top-full left-0 w-full shadow-lg">
             <div className="px-6 pt-4 pb-6 space-y-4 flex flex-col">
-              <a href="#inicio" className="block text-secondary font-medium">Inicio</a>
-              <a href="#nosotros" className="block text-secondary font-medium">Nosotros</a>
-              <a href="#servicios" className="block text-secondary font-medium">Servicios</a>
-              <a href="#casos" className="block text-secondary font-medium">Casos de Éxito</a>
+              <a href="#inicio" onClick={() => setIsMenuOpen(false)} className="block text-secondary font-medium hover:text-primary transition-colors">Inicio</a>
+              <a href="#nosotros" onClick={() => setIsMenuOpen(false)} className="block text-secondary font-medium hover:text-primary transition-colors">Nosotros</a>
+              <a href="#servicios" onClick={() => setIsMenuOpen(false)} className="block text-secondary font-medium hover:text-primary transition-colors">Servicios</a>
+              <a href="#casos" onClick={() => setIsMenuOpen(false)} className="block text-secondary font-medium hover:text-primary transition-colors">Casos de Éxito</a>
               <button className="w-full bg-primary text-white px-6 py-3 rounded-md font-bold text-center">
                 Contáctanos
               </button>
@@ -70,35 +109,35 @@ export default function FrontuariLanding() {
         )}
       </header>
 
-      {/* 2. HERO SECTION */}
+      {/* HERO & CONTENT */}
       <main>
-        <section id="inicio" className="pt-32 pb-20 lg:pt-48 lg:pb-32 px-6 lg:px-8 max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            
+        {/* 2. HERO SECTION */}
+        <section id="inicio" className="pt-28 sm:pt-32 lg:pt-48 pb-12 sm:pb-16 lg:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+
             {/* Hero Text */}
-            <div className="space-y-8">
-              <h1 className="text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
+            <div className="space-y-6 sm:space-y-8">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
                 Innovación y Compromiso Tecnológico para tu Empresa
               </h1>
-              <p className="text-lg text-secondary/80 max-w-lg leading-relaxed">
+              <p className="text-base sm:text-lg text-secondary/80 max-w-lg leading-relaxed">
                 Transformamos procesos operativos mediante soluciones de software corporativo a medida. Escalabilidad, seguridad y eficiencia estructural para negocios del mañana.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <button className="bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-md font-bold flex items-center justify-center transition-all transform hover:-translate-y-1 shadow-soft">
-                  Inicia tu transformación <ArrowRight className="ml-2" size={20} />
+              <div className="flex flex-col sm:flex-row gap-4 pt-2 sm:pt-4">
+                <button className="w-full sm:w-auto bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-md font-bold flex items-center justify-center transition-all transform hover:-translate-y-1 shadow-soft">
+                  Inicia tu transformación <ArrowRight className="ml-2 shrink-0" size={20} />
                 </button>
-                <button className="bg-transparent border-2 border-complementary text-secondary hover:border-primary hover:text-primary px-8 py-4 rounded-md font-bold transition-all">
+                <button className="w-full sm:w-auto bg-transparent border-2 border-complementary text-secondary hover:border-primary hover:text-primary px-8 py-4 rounded-md font-bold transition-all text-center">
                   Conoce más
                 </button>
               </div>
             </div>
 
             {/* Hero Image / Abstract Visual */}
-            <div className="relative w-full h-[400px] lg:h-[500px] bg-complementary-light rounded-2xl overflow-hidden flex items-center justify-center border border-complementary/20 shadow-sm group">
-              {/* Aquí idealmente va una ilustración isométrica. Se simula con geometría y un icono por ahora */}
+            <div className="relative w-full h-[280px] sm:h-[360px] lg:h-[500px] bg-complementary-light rounded-2xl overflow-hidden flex items-center justify-center border border-complementary/20 shadow-sm group">
               <div className="absolute inset-0 bg-gradient-to-tr from-complementary-light to-white opacity-50"></div>
-              <Database size={120} className="text-primary/20 group-hover:scale-110 transition-transform duration-700" />
-              <div className="absolute bottom-10 left-10 right-10 bg-white/60 backdrop-blur-sm p-6 rounded-xl border border-white">
+              <Database className="w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 text-primary/20 group-hover:scale-110 transition-transform duration-700" />
+              <div className="absolute bottom-4 left-4 right-4 sm:bottom-10 sm:left-10 sm:right-10 bg-white/60 backdrop-blur-sm p-4 sm:p-6 rounded-xl border border-white">
                 <div className="h-2 w-1/3 bg-primary rounded-full mb-3"></div>
                 <div className="h-2 w-2/3 bg-complementary rounded-full"></div>
               </div>
@@ -107,25 +146,99 @@ export default function FrontuariLanding() {
         </section>
 
         {/* 3. FEATURES (NUESTRA ESENCIA) */}
-        <section id="nosotros" className="py-24 bg-white border-t border-complementary-light px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl lg:text-4xl font-bold mb-4">Nuestra Esencia</h2>
-              <div className="w-20 h-1 bg-primary mx-auto rounded-full"></div>
+        <section id="nosotros" className="py-12 sm:py-16 lg:py-24 bg-white border-t border-complementary-light">
+
+          {/* BANNER DE FONDO */}
+          <div className="relative w-full py-16 sm:py-20 mb-12 sm:mb-16 overflow-hidden bg-secondary/5 border-y border-complementary/10">
+            <div className="absolute inset-0 z-0">
+              <img
+                src={bannerNosotros.src}
+                alt="Banner Frontuari Equipo"
+                className="w-full h-full object-cover object-center opacity-50"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-white opacity-30"></div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              {/* Card 1 */}
-              <div className="bg-white p-10 rounded-xl shadow-soft border border-complementary/10 hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-secondary tracking-tight mb-4">
+                Nuestra Esencia
+              </h2>
+              <div className="w-24 h-1.5 bg-primary mx-auto rounded-full shadow-sm"></div>
+            </div>
+          </div>
+
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            {/* BLOQUE DE IMAGEN Y TEXTO */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-16 bg-complementary-light/40 p-6 sm:p-8 lg:p-10 rounded-2xl border border-complementary/15 shadow-sm">
+
+              <div className="lg:col-span-5 relative w-full h-64 sm:h-80 lg:h-96 rounded-xl overflow-hidden shadow-md group">
+                <img
+                  src={nombreFrontuari.src}
+                  alt="Frontuari - Identidad y Fortaleza"
+                  className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
+                />
+                <div className="absolute inset-0 ring-1 ring-black/5 rounded-xl"></div>
+              </div>
+
+              <div className="lg:col-span-7 space-y-4 sm:space-y-6">
+                <span className="text-primary font-bold text-xs sm:text-sm uppercase tracking-wider bg-primary/10 px-3 py-1 rounded-full inline-block">
+                  Sobre Nosotros:
+                </span>
+
+                <h3 className="text-secondary/70 text-base sm:text-base leading-relaxed">
+                  Frontuari C,A Somos una empresa con más de 10 años de experiencia dedicada al desarrollo o implementación de herramientas tecnológicas ofreciendo servicios de calidad, trabajamos con tecnologías de punta, para brindar a nuestros clientes las mejores soluciones a todas sus necesidades.
+                </h3>
+
+
+                <p className="text-2xl sm:text-3xl font-extrabold text-secondary leading-tight">
+                  ¿Cómo nace el nombre de la empresa?
+                </p>
+                <p className="text-secondary/70 text-sm sm:text-base leading-relaxed">
+                  <strong>FRONTUARI</strong> nace de la unión de las palabras del <strong>“Oso Frontino”</strong> característico de los Andes Venezolanos, única especie viviente de su género y único también en Sur América, en peligro de extinción y el <strong>“Río Ventuari”</strong> del Estado Amazonas, es el cuarto más grande de Venezuela.
+                </p>
+
+
+              </div>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-16 bg-complementary-light/40 p-6 sm:p-8 lg:p-10 rounded-2xl border border-complementary/15 shadow-sm">
+              <div className="lg:col-span-5 relative w-full h-full sm:h-auto lg:h-auto rounded-xl overflow-hidden shadow-md group">
+                <img
+                  src={logoOpenSource.src}
+                  alt="OpenSource Consulting Group - Alianza Estratégica"
+                  className="w-full h-full object-cover object-center"
+                />
+                <div className="absolute inset-0 ring-1 ring-black/5 rounded-xl"></div>
+
+                {/* Imagen con padding */}
+                <img
+                  src={logoCombinado.src}
+                  alt="Datacomm y Frontuari - Alianza Estratégica"
+                  className="w-full h-full object-cover object-center p-7 sm:p-8"
+                />
+                <div className="absolute inset-0 ring-1 ring-black/5 rounded-xl"></div>
+              </div>
+
+              <div className="lg:col-span-7 space-y-4 sm:space-y-6"><p className="text-2xl sm:text-3xl font-extrabold text-secondary leading-tight">
+                Una alianza importante…
+              </p>
+                <p className="text-secondary/70 text-sm sm:text-base leading-relaxed">
+                  Frontuari trabaja de la mano con la empresa <strong>datacomm</strong> bajo la marca llamada <span style={{ color: '#24588d' }}><strong>«OpenSource Consulting Group»</strong></span>, esta alianza estratégica tiene el fin de ofrecer y garantizar un trabajo de calidad, profesional y de excelencia en todos nuestros productos y servicios.
+                </p>
+              </div>
+            </div>
+
+            {/* CARDS DE VALORES */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
+              <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-xl shadow-soft border border-complementary/10 hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
                 <ShieldCheck size={40} className="text-primary mb-6" />
                 <h3 className="text-xl font-bold mb-3">Compromiso</h3>
                 <p className="text-secondary/70 leading-relaxed">
                   Garantizamos entregas precisas y acompañamiento continuo. Tu éxito operativo es la métrica de nuestra efectividad.
                 </p>
               </div>
-              
-              {/* Card 2 */}
-              <div className="bg-white p-10 rounded-xl shadow-soft border border-complementary/10 hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
+
+              <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-xl shadow-soft border border-complementary/10 hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
                 <Lightbulb size={40} className="text-primary mb-6" />
                 <h3 className="text-xl font-bold mb-3">Innovación</h3>
                 <p className="text-secondary/70 leading-relaxed">
@@ -133,8 +246,7 @@ export default function FrontuariLanding() {
                 </p>
               </div>
 
-              {/* Card 3 */}
-              <div className="bg-white p-10 rounded-xl shadow-soft border border-complementary/10 hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
+              <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-xl shadow-soft border border-complementary/10 hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
                 <Users size={40} className="text-primary mb-6" />
                 <h3 className="text-xl font-bold mb-3">Conexión</h3>
                 <p className="text-secondary/70 leading-relaxed">
@@ -142,16 +254,17 @@ export default function FrontuariLanding() {
                 </p>
               </div>
             </div>
+
           </div>
         </section>
 
         {/* 4. SERVICES SECTION */}
-        <section id="servicios" className="py-24 bg-complementary-light px-6 lg:px-8">
+        <section id="servicios" className="py-12 sm:py-16 lg:py-24 bg-complementary-light px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-end mb-16">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 sm:mb-16">
               <div className="max-w-2xl">
-                <h2 className="text-3xl lg:text-4xl font-bold mb-4">Soluciones Tecnológicas Integrales</h2>
-                <p className="text-secondary/70 text-lg">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">Soluciones Tecnológicas Integrales</h2>
+                <p className="text-secondary/70 text-base sm:text-lg">
                   Infraestructura, desarrollo y análisis de datos enfocados en el rendimiento empresarial.
                 </p>
               </div>
@@ -160,11 +273,9 @@ export default function FrontuariLanding() {
               </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-              
-              {/* Service 1 */}
-              <div className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow group border border-transparent hover:border-complementary/20">
-                <div className="w-14 h-14 bg-complementary-light rounded-lg flex items-center justify-center mb-6 group-hover:bg-primary transition-colors">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-transparent hover:border-complementary/20">
+                <div className="w-14 h-14 bg-complementary-light hover:bg-primary rounded-lg flex items-center justify-center mb-6 transition-colors group">
                   <Database size={28} className="text-primary group-hover:text-white transition-colors" />
                 </div>
                 <h3 className="text-lg font-bold mb-3">Implementación ERP</h3>
@@ -173,9 +284,8 @@ export default function FrontuariLanding() {
                 </p>
               </div>
 
-              {/* Service 2 */}
-              <div className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow group border border-transparent hover:border-complementary/20">
-                <div className="w-14 h-14 bg-complementary-light rounded-lg flex items-center justify-center mb-6 group-hover:bg-primary transition-colors">
+              <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-transparent hover:border-complementary/20">
+                <div className="w-14 h-14 bg-complementary-light hover:bg-primary rounded-lg flex items-center justify-center mb-6 transition-colors group">
                   <LineChart size={28} className="text-primary group-hover:text-white transition-colors" />
                 </div>
                 <h3 className="text-lg font-bold mb-3">Inteligencia de Negocios</h3>
@@ -184,9 +294,8 @@ export default function FrontuariLanding() {
                 </p>
               </div>
 
-              {/* Service 3 */}
-              <div className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow group border border-transparent hover:border-complementary/20">
-                <div className="w-14 h-14 bg-complementary-light rounded-lg flex items-center justify-center mb-6 group-hover:bg-primary transition-colors">
+              <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-transparent hover:border-complementary/20">
+                <div className="w-14 h-14 bg-complementary-light hover:bg-primary rounded-lg flex items-center justify-center mb-6 transition-colors group">
                   <Smartphone size={28} className="text-primary group-hover:text-white transition-colors" />
                 </div>
                 <h3 className="text-lg font-bold mb-3">Desarrollo Móvil</h3>
@@ -195,9 +304,8 @@ export default function FrontuariLanding() {
                 </p>
               </div>
 
-              {/* Service 4 */}
-              <div className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow group border border-transparent hover:border-complementary/20">
-                <div className="w-14 h-14 bg-complementary-light rounded-lg flex items-center justify-center mb-6 group-hover:bg-primary transition-colors">
+              <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-transparent hover:border-complementary/20">
+                <div className="w-14 h-14 bg-complementary-light hover:bg-primary rounded-lg flex items-center justify-center mb-6 transition-colors group">
                   <Server size={28} className="text-primary group-hover:text-white transition-colors" />
                 </div>
                 <h3 className="text-lg font-bold mb-3">Administración Linux</h3>
@@ -205,16 +313,51 @@ export default function FrontuariLanding() {
                   Configuración, mantenimiento y seguridad avanzada de servidores en entornos Debian.
                 </p>
               </div>
-
             </div>
+          </div>
+        </section>
+
+        {/* 5. CASOS DE ÉXITO */}
+        <section id="casos" className="py-16 sm:py-20 lg:py-24 bg-white border-t border-complementary-light">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            {/* Encabezado */}
+            <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+              <span className="text-primary font-bold text-xs sm:text-sm uppercase tracking-wider bg-primary/10 px-3 py-1 rounded-full inline-block mb-3">
+                Casos de Éxito
+              </span>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-secondary tracking-tight mb-4">
+                Lorem ipsum.
+              </h2>
+              <p className="text-secondary/70 text-base sm:text-lg leading-relaxed">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              </p>
+            </div>
+
+            {/* Grid de Logos de Clientes */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8 items-center justify-center">
+              {enterpriseLogos.map((item, index) => (
+                <div
+                  key={index}
+                  className="bg-complementary-light/30 hover:bg-white p-6 rounded-xl transition-all duration-300 flex items-center justify-center h-28 group"
+                >
+                  <img
+                    src={item.src.src}
+                    alt={item.name}
+                    className="max-h-50 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                  />
+                </div>
+              ))}
+            </div>
+
           </div>
         </section>
       </main>
 
-      {/* 5. FOOTER */}
-      <footer className="bg-secondary text-complementary-light pt-20 pb-10 px-6 lg:px-8 border-t-[6px] border-primary">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
-          
+      {/* 6. FOOTER */}
+      <footer className="bg-secondary text-complementary-light pt-12 sm:pt-16 lg:pt-20 pb-8 sm:pb-10 px-4 sm:px-6 lg:px-8 border-t-[6px] border-primary">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-10 sm:mb-16">
+
           {/* Brand Info */}
           <div>
             <span className="font-heading font-bold text-3xl tracking-tight text-white block mb-6">
@@ -253,16 +396,16 @@ export default function FrontuariLanding() {
         </div>
 
         {/* Copyright */}
-        <div className="max-w-7xl mx-auto border-t border-complementary/20 pt-8 flex flex-col md:flex-row items-center justify-between">
-          <p className="text-xs text-complementary">
+        <div className="max-w-7xl mx-auto border-t border-complementary/20 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
+          <p className="text-xs text-complementary text-center md:text-left">
             &copy; {new Date().getFullYear()} Frontuari, C.A. Todos los derechos reservados.
           </p>
-          <p className="text-xs text-complementary mt-2 md:mt-0">
+          <p className="text-xs text-complementary text-center md:text-right">
             Diseñado con precisión y excelencia.
           </p>
         </div>
       </footer>
-      
+
     </div>
   );
 }
