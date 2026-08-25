@@ -1,6 +1,5 @@
 'use client';
 
-import React, { useState } from 'react';
 import {
   Menu, X, Server, Smartphone,
   LineChart, Database, ShieldCheck,
@@ -30,7 +29,7 @@ import logoPolar from '../assets/images/enterprises/Empresas-polar.png';
 import logoBio from '../assets/images/enterprises/biomercados.png';
 
 export default function FrontuariLanding() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isMenuOpen = false;
 
   // Lista de empresas colaboradoras
   const enterpriseLogos = [
@@ -82,7 +81,6 @@ export default function FrontuariLanding() {
             {/* Mobile Menu Button */}
             <div className="md:hidden">
               <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="text-secondary p-2 focus:outline-none"
                 aria-expanded={isMenuOpen}
                 aria-label="Abrir menú de navegación"
@@ -97,10 +95,10 @@ export default function FrontuariLanding() {
         {isMenuOpen && (
           <div className="md:hidden bg-white border-b border-complementary/20 absolute top-full left-0 w-full shadow-lg">
             <div className="px-6 pt-4 pb-6 space-y-4 flex flex-col">
-              <a href="#inicio" onClick={() => setIsMenuOpen(false)} className="block text-secondary font-medium hover:text-primary transition-colors">Inicio</a>
-              <a href="#nosotros" onClick={() => setIsMenuOpen(false)} className="block text-secondary font-medium hover:text-primary transition-colors">Nosotros</a>
-              <a href="#servicios" onClick={() => setIsMenuOpen(false)} className="block text-secondary font-medium hover:text-primary transition-colors">Servicios</a>
-              <a href="#casos" onClick={() => setIsMenuOpen(false)} className="block text-secondary font-medium hover:text-primary transition-colors">Casos de Éxito</a>
+              <a href="#inicio" className="block text-secondary font-medium hover:text-primary transition-colors">Inicio</a>
+              <a href="#nosotros" className="block text-secondary font-medium hover:text-primary transition-colors">Nosotros</a>
+              <a href="#servicios" className="block text-secondary font-medium hover:text-primary transition-colors">Servicios</a>
+              <a href="#casos" className="block text-secondary font-medium hover:text-primary transition-colors">Casos de Éxito</a>
               <button className="w-full bg-primary text-white px-6 py-3 rounded-md font-bold text-center">
                 Contáctanos
               </button>
