@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import {
   Menu, X, Server, Smartphone,
   LineChart, Database, ShieldCheck,
@@ -12,7 +13,6 @@ import logoOpenSource from '../assets/images/icons/opensource.png';
 import logoCombinado from '../assets/images/icons/Logo-Frontuari-Datacomm.png';
 import bannerNosotros from '../assets/images/banners/banner-nosotros.jpg';
 import nombreFrontuari from '../assets/images/nombre-frontuari.jpg';
-
 
 // LOGOS (empresas)
 import logoCoposa from '../assets/images/enterprises/coposa.png';
@@ -30,8 +30,42 @@ import logoBio from '../assets/images/enterprises/biomercados.png';
 
 export default function FrontuariLanding() {
   const isMenuOpen = false;
+  const [selectedCard, setSelectedCard] = useState<null | { id: number; title: string; image: any; description: string; icon?: any }>(null);
+  
+  // Estado para controlar el modal de Política de Privacidad
+  const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
 
-  // Lista de empresas colaboradoras
+  const serviceCards = [
+    {
+      id: 1,
+      title: 'Infraestructura & Servidores',
+      icon: Server,
+      image: nombreFrontuari,
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. Cras venenatis euismod malesuada. Nullam ac ex se d eros elementum varius. Duis vel neque at nisl hendrerit eleifend a ut orci.'
+    },
+    {
+      id: 2,
+      title: 'Desarrollo Móvil',
+      icon: Smartphone,
+      image: nombreFrontuari,
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur hendrerit, neque at feugiat vulputate, nunc magna eleifend magna, vel placerat diam dui in nisl. Phasellus sodales cursus nisi, ac tempor nisi porta egestas.'
+    },
+    {
+      id: 3,
+      title: 'Análisis de Datos & Métricas',
+      icon: LineChart,
+      image: nombreFrontuari,
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tristique massa in magna finibus, et consectetur leo posuere. Aliquam nec hendrerit leo, sed ultrices quam. Sed cursus pretium eros id eleifend.'
+    },
+    {
+      id: 4,
+      title: 'Gestión de Bases de Datos',
+      icon: Database,
+      image: nombreFrontuari,
+      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce vulputate, justo id imperdiet pharetra, sapien orci hendrerit dolor, vitae imperdiet diam arcu in purus. Donec finibus sapien sit amet lorem accumsan facilisis.'
+    }
+  ];
+
   const enterpriseLogos = [
     { name: 'Coposa', src: logoCoposa },
     { name: 'ANCA', src: logoAnca },
@@ -55,7 +89,6 @@ export default function FrontuariLanding() {
         <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20 md:h-24 gap-4">
 
-            {/* Logo Area */}
             <img
               decoding="async"
               className="h-4 sm:h-6 md:h-7 w-auto shrink-0 object-contain my-auto"
@@ -63,7 +96,6 @@ export default function FrontuariLanding() {
               alt="frontuari"
             />
 
-            {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center space-x-6 lg:space-x-10">
               <a href="#inicio" className="text-secondary hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide">Inicio</a>
               <a href="#nosotros" className="text-secondary hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide">Nosotros</a>
@@ -78,7 +110,6 @@ export default function FrontuariLanding() {
               </button>
             </nav>
 
-            {/* Mobile Menu Button */}
             <div className="md:hidden">
               <button
                 className="text-secondary p-2 focus:outline-none"
@@ -91,7 +122,6 @@ export default function FrontuariLanding() {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden bg-white border-b border-complementary/20 absolute top-full left-0 w-full shadow-lg">
             <div className="px-6 pt-4 pb-6 space-y-4 flex flex-col">
@@ -109,11 +139,9 @@ export default function FrontuariLanding() {
 
       {/* HERO & CONTENT */}
       <main>
-        {/* 2. HERO SECTION */}
+        {/* HERO SECTION */}
         <section id="inicio" className="pt-28 sm:pt-32 lg:pt-48 pb-12 sm:pb-16 lg:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-
-            {/* Hero Text */}
             <div className="space-y-6 sm:space-y-8">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
                 Innovación y Compromiso Tecnológico para tu Empresa
@@ -131,7 +159,6 @@ export default function FrontuariLanding() {
               </div>
             </div>
 
-            {/* Hero Image / Abstract Visual */}
             <div className="relative w-full h-[280px] sm:h-[360px] lg:h-[500px] bg-complementary-light rounded-2xl overflow-hidden flex items-center justify-center border border-complementary/20 shadow-sm group">
               <div className="absolute inset-0 bg-gradient-to-tr from-complementary-light to-white opacity-50"></div>
               <Database className="w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 text-primary/20 group-hover:scale-110 transition-transform duration-700" />
@@ -143,10 +170,8 @@ export default function FrontuariLanding() {
           </div>
         </section>
 
-        {/* 3. FEATURES (NUESTRA ESENCIA) */}
+        {/* NOSOTROS SECTION */}
         <section id="nosotros" className="py-12 sm:py-16 lg:py-24 bg-white border-t border-complementary-light">
-
-          {/* BANNER DE FONDO */}
           <div className="relative w-full py-16 sm:py-20 mb-12 sm:mb-16 overflow-hidden bg-secondary/5 border-y border-complementary/10">
             <div className="absolute inset-0 z-0">
               <img
@@ -166,10 +191,7 @@ export default function FrontuariLanding() {
           </div>
 
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-            {/* BLOQUE DE IMAGEN Y TEXTO */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-16 bg-complementary-light/40 p-6 sm:p-8 lg:p-10 rounded-2xl border border-complementary/15 shadow-sm">
-
               <div className="lg:col-span-5 relative w-full h-64 sm:h-80 lg:h-96 rounded-xl overflow-hidden shadow-md group">
                 <img
                   src={nombreFrontuari.src}
@@ -183,22 +205,18 @@ export default function FrontuariLanding() {
                 <span className="text-primary font-bold text-xs sm:text-sm uppercase tracking-wider bg-primary/10 px-3 py-1 rounded-full inline-block">
                   Sobre Nosotros:
                 </span>
-
                 <h3 className="text-secondary/70 text-base sm:text-base leading-relaxed">
                   Frontuari C,A Somos una empresa con más de 10 años de experiencia dedicada al desarrollo o implementación de herramientas tecnológicas ofreciendo servicios de calidad, trabajamos con tecnologías de punta, para brindar a nuestros clientes las mejores soluciones a todas sus necesidades.
                 </h3>
-
-
                 <p className="text-2xl sm:text-3xl font-extrabold text-secondary leading-tight">
                   ¿Cómo nace el nombre de la empresa?
                 </p>
                 <p className="text-secondary/70 text-sm sm:text-base leading-relaxed">
                   <strong>FRONTUARI</strong> nace de la unión de las palabras del <strong>“Oso Frontino”</strong> característico de los Andes Venezolanos, única especie viviente de su género y único también en Sur América, en peligro de extinción y el <strong>“Río Ventuari”</strong> del Estado Amazonas, es el cuarto más grande de Venezuela.
                 </p>
-
-
               </div>
             </div>
+
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-16 bg-complementary-light/40 p-6 sm:p-8 lg:p-10 rounded-2xl border border-complementary/15 shadow-sm">
               <div className="lg:col-span-5 relative w-full h-full sm:h-auto lg:h-auto rounded-xl overflow-hidden shadow-md group">
                 <img
@@ -207,8 +225,6 @@ export default function FrontuariLanding() {
                   className="w-full h-full object-cover object-center"
                 />
                 <div className="absolute inset-0 ring-1 ring-black/5 rounded-xl"></div>
-
-                {/* Imagen con padding */}
                 <img
                   src={logoCombinado.src}
                   alt="Datacomm y Frontuari - Alianza Estratégica"
@@ -217,16 +233,16 @@ export default function FrontuariLanding() {
                 <div className="absolute inset-0 ring-1 ring-black/5 rounded-xl"></div>
               </div>
 
-              <div className="lg:col-span-7 space-y-4 sm:space-y-6"><p className="text-2xl sm:text-3xl font-extrabold text-secondary leading-tight">
-                Una alianza importante…
-              </p>
+              <div className="lg:col-span-7 space-y-4 sm:space-y-6">
+                <p className="text-2xl sm:text-3xl font-extrabold text-secondary leading-tight">
+                  Una alianza importante…
+                </p>
                 <p className="text-secondary/70 text-sm sm:text-base leading-relaxed">
                   Frontuari trabaja de la mano con la empresa <strong>datacomm</strong> bajo la marca llamada <span style={{ color: '#24588d' }}><strong>«OpenSource Consulting Group»</strong></span>, esta alianza estratégica tiene el fin de ofrecer y garantizar un trabajo de calidad, profesional y de excelencia en todos nuestros productos y servicios.
                 </p>
               </div>
             </div>
 
-            {/* CARDS DE VALORES */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
               <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-xl shadow-soft border border-complementary/10 hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
                 <ShieldCheck size={40} className="text-primary mb-6" />
@@ -240,7 +256,7 @@ export default function FrontuariLanding() {
                 <Lightbulb size={40} className="text-primary mb-6" />
                 <h3 className="text-xl font-bold mb-3">Innovación</h3>
                 <p className="text-secondary/70 leading-relaxed">
-                  Adoptamos y adaptamos tecnologías de vanguardia para crear arquitecturas digitales que rompen paradigmas.
+                  Adoptamos y adaptamos tecnologías de vanguardia para crear arquitecturas digitales que rompen paradigms.
                 </p>
               </div>
 
@@ -252,11 +268,10 @@ export default function FrontuariLanding() {
                 </p>
               </div>
             </div>
-
           </div>
         </section>
 
-        {/* 4. SERVICES SECTION */}
+        {/* SERVICES SECTION */}
         <section id="servicios" className="py-12 sm:py-16 lg:py-24 bg-complementary-light px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 sm:mb-16">
@@ -266,73 +281,55 @@ export default function FrontuariLanding() {
                   Infraestructura, desarrollo y análisis de datos enfocados en el rendimiento empresarial.
                 </p>
               </div>
-              <button className="hidden md:block text-primary font-bold hover:underline mt-4 md:mt-0">
-                Ver todos los servicios &rarr;
-              </button>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-              <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-transparent hover:border-complementary/20">
-                <div className="w-14 h-14 bg-complementary-light hover:bg-primary rounded-lg flex items-center justify-center mb-6 transition-colors group">
-                  <Database size={28} className="text-primary group-hover:text-white transition-colors" />
-                </div>
-                <h3 className="text-lg font-bold mb-3">Implementación ERP</h3>
-                <p className="text-sm text-secondary/70 mb-4">
-                  Despliegue y migración experta hacia ecosistemas iDempiere adaptados a tus procesos internos.
-                </p>
-              </div>
+              {serviceCards.map((card) => {
+                const IconComponent = card.icon;
+                return (
+                  <div
+                    key={card.id}
+                    onClick={() => setSelectedCard(card)}
+                    className="group cursor-pointer overflow-hidden rounded-xl shadow-md border border-complementary/20 bg-white flex flex-col transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
+                  >
+                    <div className="relative h-48 w-full overflow-hidden bg-gray-100">
+                      <img
+                        src={card.image.src}
+                        alt={card.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
 
-              <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-transparent hover:border-complementary/20">
-                <div className="w-14 h-14 bg-complementary-light hover:bg-primary rounded-lg flex items-center justify-center mb-6 transition-colors group">
-                  <LineChart size={28} className="text-primary group-hover:text-white transition-colors" />
-                </div>
-                <h3 className="text-lg font-bold mb-3">Inteligencia de Negocios</h3>
-                <p className="text-sm text-secondary/70 mb-4">
-                  Data Warehousing y dashboards dinámicos utilizando Pentaho Data Integration y PowerBI.
-                </p>
-              </div>
-
-              <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-transparent hover:border-complementary/20">
-                <div className="w-14 h-14 bg-complementary-light hover:bg-primary rounded-lg flex items-center justify-center mb-6 transition-colors group">
-                  <Smartphone size={28} className="text-primary group-hover:text-white transition-colors" />
-                </div>
-                <h3 className="text-lg font-bold mb-3">Desarrollo Móvil</h3>
-                <p className="text-sm text-secondary/70 mb-4">
-                  Creación de aplicaciones corporativas robustas para optimizar tu fuerza de ventas y logística.
-                </p>
-              </div>
-
-              <div className="bg-white p-6 sm:p-8 rounded-xl shadow-sm hover:shadow-md transition-shadow border border-transparent hover:border-complementary/20">
-                <div className="w-14 h-14 bg-complementary-light hover:bg-primary rounded-lg flex items-center justify-center mb-6 transition-colors group">
-                  <Server size={28} className="text-primary group-hover:text-white transition-colors" />
-                </div>
-                <h3 className="text-lg font-bold mb-3">Administración Linux</h3>
-                <p className="text-sm text-secondary/70 mb-4">
-                  Configuración, mantenimiento y seguridad avanzada de servidores en entornos Debian.
-                </p>
-              </div>
+                    <div className="p-4 bg-white flex items-center justify-between gap-3 border-t border-complementary/10 z-10">
+                      <h3 className="text-secondary font-bold text-base leading-snug group-hover:text-primary transition-colors duration-300">
+                        {card.title}
+                      </h3>
+                      <div className="p-2.5 rounded-lg bg-complementary-light text-secondary/70 group-hover:bg-primary group-hover:text-white group-hover:shadow-md transition-all duration-300 shrink-0">
+                        <IconComponent size={20} className="transition-transform duration-300 group-hover:scale-110" />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </section>
 
-        {/* 5. CASOS DE ÉXITO */}
+        {/* CASOS DE ÉXITO */}
         <section id="casos" className="py-16 sm:py-20 lg:py-24 bg-white border-t border-complementary-light">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-            {/* Encabezado */}
             <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
               <span className="text-primary font-bold text-xs sm:text-sm uppercase tracking-wider bg-primary/10 px-3 py-1 rounded-full inline-block mb-3">
                 Casos de Éxito
               </span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-secondary tracking-tight mb-4">
-                Lorem ipsum.
+                Empresas que han confiado en nosotros
               </h2>
               <p className="text-secondary/70 text-base sm:text-lg leading-relaxed">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Estas son algunas de las empresas que han confiado en nuestros servicios para sus necesidades tecnológicas y de desarrollo.
               </p>
             </div>
 
-            {/* Grid de Logos de Clientes */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8 items-center justify-center">
               {enterpriseLogos.map((item, index) => (
                 <div
@@ -347,16 +344,107 @@ export default function FrontuariLanding() {
                 </div>
               ))}
             </div>
-
           </div>
         </section>
       </main>
 
-      {/* 6. FOOTER */}
+      {/* MODAL SERVICIOS */}
+      {selectedCard && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto"
+          onClick={() => setSelectedCard(null)}
+        >
+          <div
+            className="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl my-8 transform transition-all"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative w-full h-64 sm:h-80 bg-gray-100">
+              <img
+                src={selectedCard.image.src}
+                alt={selectedCard.title}
+                className="w-full h-full object-cover"
+              />
+              <button
+                onClick={() => setSelectedCard(null)}
+                className="absolute top-4 right-4 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors"
+                aria-label="Cerrar modal"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-6 sm:p-8 space-y-4 max-h-[60vh] overflow-y-auto">
+              <h3 className="text-2xl font-bold text-secondary">
+                {selectedCard.title}
+              </h3>
+              <p className="text-secondary/80 leading-relaxed text-sm sm:text-base">
+                {selectedCard.description}
+              </p>
+
+              <div className="pt-6 border-t border-complementary/10 flex justify-end">
+                <button
+                  onClick={() => setSelectedCard(null)}
+                  className="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-colors"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL POLÍTICA DE PRIVACIDAD */}
+      {isPrivacyOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto"
+          onClick={() => setIsPrivacyOpen(false)}
+        >
+          <div
+            className="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl my-8 transform transition-all flex flex-col max-h-[85vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header del Modal */}
+            <div className="px-6 py-5 border-b border-complementary/15 flex items-center justify-between bg-complementary-light/30">
+              <h3 className="text-xl sm:text-2xl font-bold text-secondary">
+                Política de Privacidad
+              </h3>
+              <button
+                onClick={() => setIsPrivacyOpen(false)}
+                className="text-secondary/60 hover:text-secondary rounded-full p-1.5 transition-colors"
+                aria-label="Cerrar modal de privacidad"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Cuerpo con Scroll */}
+            <div className="p-6 sm:p-8 space-y-4 overflow-y-auto text-secondary/80 text-sm sm:text-base leading-relaxed">
+              <p>
+                En Frontuari C.A. nos comprometemos a resguardar la privacidad y la confidencialidad de la información proporcionada por nuestros usuarios y clientes durante la prestación de nuestros servicios de software corporativo, infraestructura y servidores, desarrollo móvil, análisis de datos y gestión de bases de datos. La información recopilada se utiliza exclusivamente para fines operativos, técnicos y de optimización de las soluciones contratadas, garantizando un tratamiento profesional y alineado con los estándares habituales de la industria de tecnologías de la información.
+                </p>
+              <p>
+                Garantizamos que no venderemos, alquilaremos ni compartiremos datos personales ni información sensible con terceros no autorizados con fines comerciales o ajenos a la relación contractual. Cualquier transferencia de información se limitará estrictamente a los requerimientos legales aplicables o al apoyo operativo indispensable bajo condiciones confidenciales, reservándonos el derecho de actualizar esta política para adaptarla a las necesidades técnicas u operativas de la compañía.
+                </p>
+            </div>
+
+            {/* Footer del Modal */}
+            <div className="px-6 py-4 border-t border-complementary/10 bg-gray-50 flex justify-end">
+              <button
+                onClick={() => setIsPrivacyOpen(false)}
+                className="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-colors shadow-sm"
+              >
+                Entendido
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* FOOTER */}
       <footer className="bg-secondary text-complementary-light pt-12 sm:pt-16 lg:pt-20 pb-8 sm:pb-10 px-4 sm:px-6 lg:px-8 border-t-[6px] border-primary">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-10 sm:mb-16">
 
-          {/* Brand Info */}
           <div>
             <span className="font-heading font-bold text-3xl tracking-tight text-white block mb-6">
               Frontuari
@@ -370,7 +458,6 @@ export default function FrontuariLanding() {
             </address>
           </div>
 
-          {/* Quick Links */}
           <div>
             <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Enlaces Rápidos</h4>
             <ul className="space-y-3">
@@ -381,11 +468,17 @@ export default function FrontuariLanding() {
             </ul>
           </div>
 
-          {/* Contact & Legal */}
           <div>
             <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Legal & Contacto</h4>
             <ul className="space-y-3">
-              <li><a href="#" className="text-complementary hover:text-white transition-colors text-sm">Política de Privacidad</a></li>
+              <li>
+                <button
+                  onClick={() => setIsPrivacyOpen(true)}
+                  className="text-complementary hover:text-white transition-colors text-sm text-left focus:outline-none"
+                >
+                  Política de Privacidad
+                </button>
+              </li>
               <li><a href="#" className="text-complementary hover:text-white transition-colors text-sm">Términos de Servicio</a></li>
               <li><a href="mailto:contacto@frontuari.com" className="text-complementary hover:text-primary transition-colors text-sm mt-4 block">contacto@frontuari.com</a></li>
             </ul>
@@ -393,7 +486,6 @@ export default function FrontuariLanding() {
 
         </div>
 
-        {/* Copyright */}
         <div className="max-w-7xl mx-auto border-t border-complementary/20 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
           <p className="text-xs text-complementary text-center md:text-left">
             &copy; {new Date().getFullYear()} Frontuari, C.A. Todos los derechos reservados.
