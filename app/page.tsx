@@ -4,7 +4,8 @@ import { useState } from 'react';
 import {
   Menu, X, Server, Smartphone,
   LineChart, Database, ShieldCheck,
-  Lightbulb, Users, ArrowRight
+  Lightbulb, Users, ArrowRight,
+  ChevronLeft, ChevronRight
 } from 'lucide-react';
 
 // IMAGENES 
@@ -13,6 +14,16 @@ import logoOpenSource from '../assets/images/icons/opensource.png';
 import logoCombinado from '../assets/images/icons/Logo-Frontuari-Datacomm.png';
 import bannerNosotros from '../assets/images/banners/banner-nosotros.jpg';
 import nombreFrontuari from '../assets/images/nombre-frontuari.jpg';
+
+// APP MOVIL SCREENSHOTS
+import appMovil1 from '../assets/images/banners/appmovil/appmovil1.jpeg';
+import appMovil2 from '../assets/images/banners/appmovil/appmovil2.jpeg';
+import appMovil3 from '../assets/images/banners/appmovil/iconss2.png';
+import appMovil4 from '../assets/images/banners/appmovil/appmovil4.jpeg';
+
+// LOGO DE IDEMPIERE
+
+import logoIdempiere from '../assets/images/icons/idempiereLogo.png';
 
 // LOGOS (empresas)
 import logoCoposa from '../assets/images/enterprises/coposa.png';
@@ -30,24 +41,28 @@ import logoBio from '../assets/images/enterprises/biomercados.png';
 
 export default function FrontuariLanding() {
   const isMenuOpen = false;
-  const [selectedCard, setSelectedCard] = useState<null | { id: number; title: string; image: any; description: string; icon?: any }>(null);
+  const [selectedCard, setSelectedCard] = useState<null | { id: number; title: string; image: any; gallery?: any[]; description: string; icon?: any }>(null);
   
+  // Estado para el carrusel de imágenes
+  const [currentSlide, setCurrentSlide] = useState(0);
+
   // Estado para controlar el modal de Política de Privacidad
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
 
   const serviceCards = [
     {
       id: 1,
-      title: 'Infraestructura & Servidores',
+      title: 'iDempiere ERP',
       icon: Server,
-      image: nombreFrontuari,
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. Cras venenatis euismod malesuada. Nullam ac ex se d eros elementum varius. Duis vel neque at nisl hendrerit eleifend a ut orci.'
+      image: logoIdempiere,
+      description: 'Transforma la gestión de tu empresa con la potencia de iDempiere ERP. Centralizamos finanzas, inventario, ventas y cadena de suministro en una plataforma open-source de alto rendimiento. Diseñamos módulos a la medida, automatizamos tus procesos clave y te acompañamos con soporte especializado para escalar tu negocio sin límites.'
     },
     {
       id: 2,
       title: 'Desarrollo Móvil',
       icon: Smartphone,
-      image: nombreFrontuari,
+      image: appMovil3,
+      gallery: [appMovil1, appMovil2, appMovil3, appMovil4],
       description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur hendrerit, neque at feugiat vulputate, nunc magna eleifend magna, vel placerat diam dui in nisl. Phasellus sodales cursus nisi, ac tempor nisi porta egestas.'
     },
     {
@@ -80,6 +95,11 @@ export default function FrontuariLanding() {
     { name: 'Polar', src: logoPolar },
     { name: 'Biomercados', src: logoBio },
   ];
+
+  const handleOpenCardModal = (card: typeof serviceCards[0]) => {
+    setSelectedCard(card);
+    setCurrentSlide(0);
+  };
 
   return (
     <div className="min-h-screen bg-white selection:bg-primary selection:text-white">
@@ -289,7 +309,7 @@ export default function FrontuariLanding() {
                 return (
                   <div
                     key={card.id}
-                    onClick={() => setSelectedCard(card)}
+                    onClick={() => handleOpenCardModal(card)}
                     className="group cursor-pointer overflow-hidden rounded-xl shadow-md border border-complementary/20 bg-white flex flex-col transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
                   >
                     <div className="relative h-48 w-full overflow-hidden bg-gray-100">
@@ -358,22 +378,86 @@ export default function FrontuariLanding() {
             className="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl my-8 transform transition-all"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="relative w-full h-64 sm:h-80 bg-gray-100">
-              <img
-                src={selectedCard.image.src}
-                alt={selectedCard.title}
-                className="w-full h-full object-cover"
-              />
+            {/* Cabecera / Banner / Carrusel del Modal */}
+            <div className="relative w-full h-80 sm:h-[400px] bg-slate-900 flex items-center justify-center overflow-hidden">
+              {selectedCard.gallery && selectedCard.gallery.length > 0 ? (
+                <>
+                  {/* Fondo difuminado para rellenar de forma limpia la relación de aspecto vertical del móvil */}
+                  <img
+                    src={selectedCard.gallery[currentSlide].src}
+                    alt="Fondo Difuminado"
+                    className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-45 scale-110 pointer-events-none"
+                  />
+
+                  {/* Captura de Pantalla en Proporción Correcta */}
+                  <img
+                    src={selectedCard.gallery[currentSlide].src}
+                    alt={`${selectedCard.title} - Captura ${currentSlide + 1}`}
+                    className="relative z-10 max-h-[88%] w-auto object-contain rounded-2xl shadow-2xl border border-white/20 transition-all duration-300"
+                  />
+
+                  {/* Controles de Navegación del Carrusel */}
+                  {selectedCard.gallery.length > 1 && (
+                    <>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCurrentSlide((prev) => (prev === 0 ? selectedCard.gallery!.length - 1 : prev - 1));
+                        }}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors"
+                        aria-label="Imagen anterior"
+                      >
+                        <ChevronLeft size={22} />
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCurrentSlide((prev) => (prev === selectedCard.gallery!.length - 1 ? 0 : prev + 1));
+                        }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors"
+                        aria-label="Siguiente imagen"
+                      >
+                        <ChevronRight size={22} />
+                      </button>
+
+                      {/* Indicadores en Puntos */}
+                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex gap-2 bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-sm">
+                        {selectedCard.gallery.map((_, idx) => (
+                          <button
+                            key={idx}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setCurrentSlide(idx);
+                            }}
+                            className={`h-2 rounded-full transition-all ${
+                              currentSlide === idx ? 'bg-white w-5' : 'bg-white/50 w-2'
+                            }`}
+                            aria-label={`Ir a imagen ${idx + 1}`}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </>
+              ) : (
+                <img
+                  src={selectedCard.image.src}
+                  alt={selectedCard.title}
+                  className="w-full h-full object-cover"
+                />
+              )}
+
+              {/* Botón Cerrar */}
               <button
                 onClick={() => setSelectedCard(null)}
-                className="absolute top-4 right-4 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors"
+                className="absolute top-4 right-4 z-30 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors"
                 aria-label="Cerrar modal"
               >
                 <X size={20} />
               </button>
             </div>
 
-            <div className="p-6 sm:p-8 space-y-4 max-h-[60vh] overflow-y-auto">
+            <div className="p-6 sm:p-8 space-y-4 max-h-[50vh] overflow-y-auto">
               <h3 className="text-2xl font-bold text-secondary">
                 {selectedCard.title}
               </h3>
@@ -421,11 +505,14 @@ export default function FrontuariLanding() {
             {/* Cuerpo con Scroll */}
             <div className="p-6 sm:p-8 space-y-4 overflow-y-auto text-secondary/80 text-sm sm:text-base leading-relaxed">
               <p>
-                En Frontuari C.A. nos comprometemos a resguardar la privacidad y la confidencialidad de la información proporcionada por nuestros usuarios y clientes durante la prestación de nuestros servicios de software corporativo, infraestructura y servidores, desarrollo móvil, análisis de datos y gestión de bases de datos. La información recopilada se utiliza exclusivamente para fines operativos, técnicos y de optimización de las soluciones contratadas, garantizando un tratamiento profesional y alineado con los estándares habituales de la industria de tecnologías de la información.
-                </p>
+                Frontuari, C.A., operando bajo la marca OpenSource Consulting Group, se compromete a proteger la privacidad y confidencialidad de la información proporcionada por sus clientes en servicios de software corporativo, infraestructura, desarrollo móvil, análisis de datos y bases de datos.
+              </p>
               <p>
-                Garantizamos que no venderemos, alquilaremos ni compartiremos datos personales ni información sensible con terceros no autorizados con fines comerciales o ajenos a la relación contractual. Cualquier transferencia de información se limitará estrictamente a los requerimientos legales aplicables o al apoyo operativo indispensable bajo condiciones confidenciales, reservándonos el derecho de actualizar esta política para adaptarla a las necesidades técnicas u operativas de la compañía.
-                </p>
+                Los datos recopilados se utilizan exclusivamente con fines operativos y técnicos para optimizar las soluciones contratadas. La empresa garantiza que no venderá, alquilará ni compartirá información personal o sensible con terceros no autorizados con fines comerciales.
+              </p>
+              <p>
+                Cualquier transferencia de datos se limitará estrictamente a requerimientos legales o necesidades operativas bajo condiciones de confidencialidad. Los usuarios tienen derecho a acceder, corregir o eliminar su información personal mediante solicitud directa.
+              </p>
             </div>
 
             {/* Footer del Modal */}
