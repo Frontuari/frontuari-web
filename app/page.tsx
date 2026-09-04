@@ -1,12 +1,96 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Menu, X, Server, Smartphone,
   LineChart, Database, ShieldCheck,
   Lightbulb, Users, ArrowRight,
   ChevronLeft, ChevronRight
 } from 'lucide-react';
+
+function EnterpriseLogosTicker({ logos }: { logos: { name: string; src: any }[] }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let animId: number;
+
+    const updateScales = () => {
+      if (containerRef.current && trackRef.current) {
+        const containerRect = containerRef.current.getBoundingClientRect();
+        const containerCenter = containerRect.left + containerRect.width / 2;
+        const maxDistance = containerRect.width / 2;
+
+        const items = trackRef.current.querySelectorAll<HTMLDivElement>('.ticker-item');
+        items.forEach((item) => {
+          const itemRect = item.getBoundingClientRect();
+          const itemCenter = itemRect.left + itemRect.width / 2;
+          const distance = Math.abs(containerCenter - itemCenter);
+
+          // Distancia normalizada: 0 en el centro exacto, 1 en los bordes
+          const normDistance = Math.min(distance / maxDistance, 1);
+
+          // Escala base en bordes (~1.0) y máximo escalado al centro (~1.45)
+          const scale = 2 - normDistance * 0.45;
+          const opacity = 0.65 + (1 - normDistance) * 0.35;
+
+          item.style.transform = `scale(${scale.toFixed(3)})`;
+          item.style.opacity = opacity.toFixed(2);
+        });
+      }
+      animId = requestAnimationFrame(updateScales);
+    };
+
+    animId = requestAnimationFrame(updateScales);
+    return () => cancelAnimationFrame(animId);
+  }, []);
+
+  return (
+    /* Área específica detrás de los logos completamente blanca */
+    <div className="relative w-full py-12 bg-white border-y border-slate-200/80 shadow-inner">
+
+      {/* Texto de marquesina en el fondo: Azul desaturado con baja opacidad */}
+      <div className="absolute top-3 w-full overflow-hidden pointer-events-none select-none">
+        <div className="animate-ticker flex whitespace-nowrap text-xs sm:text-sm font-mono font-black text-[#00356b]/20 tracking-[0.3em] uppercase">
+          <span className="mr-8">
+            • CASOS DE ÉXITO • ALIANZAS ESTRATÉGICAS • TRANSFORMACIÓN DIGITAL • FRONTUARI ERP • SOLUCIONES EMPRESARIALES • CONFIANZA Y RENDIMIENTO
+          </span>
+          <span className="mr-8">
+            • CASOS DE ÉXITO • ALIANZAS ESTRATÉGICAS • TRANSFORMACIÓN DIGITAL • FRONTUARI ERP • SOLUCIONES EMPRESARIALES • CONFIANZA Y RENDIMIENTO
+          </span>
+        </div>
+      </div>
+
+      {/* Carcasa del carrusel */}
+      <div ref={containerRef} className="relative overflow-hidden w-full flex items-center py-4">
+        {/* Degradados laterales blancos para difuminar entrada y salida */}
+        <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-40 bg-gradient-to-r from-white via-white/90 to-transparent z-20 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-40 bg-gradient-to-l from-white via-white/90 to-transparent z-20 pointer-events-none" />
+
+        {/* Ticker continuo */}
+        <div ref={trackRef} className="animate-ticker flex items-center gap-10 sm:gap-14 px-4">
+          {[...logos, ...logos].map((item, index) => (
+            <div
+              key={index}
+              /* Contenedor del logo 100% transparente y dimensiones más amplias */
+              className="ticker-item shrink-0 bg-transparent w-48 sm:w-60 h-40 sm:h-44 px-4 py-2 flex flex-col items-center justify-center gap-3 transition-transform duration-75 group cursor-pointer"
+            >
+              {/* Logos con mayor tamaño general */}
+              <img
+                src={item.src.src}
+                alt={item.name}
+                className="max-h-20 sm:max-h-24 max-w-[170px] sm:max-w-[210px] w-auto h-auto object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
+              />
+              <span className="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-primary transition-colors text-center truncate max-w-full">
+                {item.name}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // IMAGENES 
 import logoFrontuari from '../assets/images/icons/Logo-Frontuari.png';
@@ -22,7 +106,6 @@ import appMovil3 from '../assets/images/banners/appmovil/iconss2.png';
 import appMovil4 from '../assets/images/banners/appmovil/appmovil4.jpeg';
 
 // LOGO DE IDEMPIERE
-
 import logoIdempiere from '../assets/images/icons/idempiereLogo.png';
 
 // LOGOS (empresas)
@@ -38,16 +121,159 @@ import logoBiogene from '../assets/images/enterprises/biogene.png';
 import logoMary from '../assets/images/enterprises/mary.png';
 import logoPolar from '../assets/images/enterprises/Empresas-polar.png';
 import logoBio from '../assets/images/enterprises/biomercados.png';
+import logoagrosimon from '../assets/images/enterprises/agrosimon.png';
+import logoasasica from '../assets/images/enterprises/asasica.png';
+import logol55 from '../assets/images/enterprises/L55.png';
+import logohielo from '../assets/images/enterprises/hielo.png';
+import logosnitch from '../assets/images/enterprises/snitch.png';
+import logotubrica from '../assets/images/enterprises/tubrica.png';
+import logopalmeral from '../assets/images/enterprises/palmeral.png';
+import logoinverlactea from '../assets/images/enterprises/inverlactea.png';
+import logofrisulca from '../assets/images/enterprises/frisulca.png';
+// ESTILO GLOBAL INYECTADO PARA EL PARPADEO DEL CURSOR
+const cursorStyle = `
+  @keyframes customBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+  .animate-cursor-blink {
+    animation: customBlink 0.8s step-start infinite;
+  }
+
+  /* Animación del Ticker Infinito */
+  @keyframes tickerScroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .animate-ticker {
+    display: flex;
+    width: max-content;
+    animation: tickerScroll 35s linear infinite;
+  }
+  .animate-ticker:hover {
+    animation-play-state: paused;
+  }
+`;
+
+// 1. TYPEWRITER HEADING (Título Principal)
+function TypewriterHeading({ text, speed = 55 }: { text: string; speed?: number }) {
+  const [displayedText, setDisplayedText] = useState('');
+
+  useEffect(() => {
+    let i = 0;
+    const timer = setInterval(() => {
+      if (i <= text.length) {
+        setDisplayedText(text.slice(0, i));
+        i++;
+      } else {
+        clearInterval(timer);
+      }
+    }, speed);
+
+    return () => clearInterval(timer);
+  }, [text, speed]);
+
+  return (
+    <span>
+      {displayedText}
+      <span className="inline-block w-[4px] h-[0.85em] bg-primary ml-1.5 animate-cursor-blink align-baseline rounded-full" />
+    </span>
+  );
+}
+
+// 2. ROTATING TYPEWRITER (Escribe, borra y cambia palabras de forma fluida)
+function RotatingTypewriter({
+  words,
+  typeSpeed = 80,
+  deleteSpeed = 40,
+  delayBetween = 2000,
+}: {
+  words: string[];
+  typeSpeed?: number;
+  deleteSpeed?: number;
+  delayBetween?: number;
+}) {
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const [currentText, setCurrentText] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    const fullWord = words[currentWordIndex];
+
+    if (!isDeleting && currentText === fullWord) {
+      const timer = setTimeout(() => {
+        setIsDeleting(true);
+      }, delayBetween);
+      return () => clearTimeout(timer);
+    }
+
+    if (isDeleting && currentText === '') {
+      setIsDeleting(false);
+      let nextIndex;
+      do {
+        nextIndex = Math.floor(Math.random() * words.length);
+      } while (words.length > 1 && nextIndex === currentWordIndex);
+
+      setCurrentWordIndex(nextIndex);
+      return;
+    }
+
+    const speed = isDeleting ? deleteSpeed : typeSpeed;
+    const timer = setTimeout(() => {
+      setCurrentText((prev) =>
+        isDeleting
+          ? fullWord.slice(0, prev.length - 1)
+          : fullWord.slice(0, prev.length + 1)
+      );
+    }, speed);
+
+    return () => clearTimeout(timer);
+  }, [currentText, isDeleting, currentWordIndex, words, typeSpeed, deleteSpeed, delayBetween]);
+
+  return (
+    <span className="text-primary font-black">
+      {currentText}
+      <span className="inline-block w-[3px] h-[0.85em] bg-primary ml-1 animate-cursor-blink align-baseline rounded-full" />
+    </span>
+  );
+}
 
 export default function FrontuariLanding() {
-  const isMenuOpen = false;
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState<null | { id: number; title: string; image: any; gallery?: any[]; description: string; icon?: any }>(null);
-  
-  // Estado para el carrusel de imágenes
   const [currentSlide, setCurrentSlide] = useState(0);
-
-  // Estado para controlar el modal de Política de Privacidad
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
+
+  const [isLogosVisible, setIsLogosVisible] = useState(false);
+  const logosSectionRef = useRef<HTMLDivElement>(null);
+
+  const heroWords = [
+    "Innovación",
+    "Desarrollo de Software",
+    "Autogestión",
+    "iDempiere ERP",
+    "Transformación Digital",
+    "Gestión Empresarial",
+    "Soluciones Tecnológicas"
+  ];
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsLogosVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    if (logosSectionRef.current) {
+      observer.observe(logosSectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   const serviceCards = [
     {
@@ -84,7 +310,7 @@ export default function FrontuariLanding() {
   const enterpriseLogos = [
     { name: 'Coposa', src: logoCoposa },
     { name: 'ANCA', src: logoAnca },
-    { name: 'Porcina', src: logoPorcina },
+    { name: 'Inversiones Porcinas', src: logoPorcina },
     { name: 'Arichuna', src: logoArichuna },
     { name: 'Las Plumas', src: logoLasPlumas },
     { name: 'Tanapo', src: logoTanapo },
@@ -92,8 +318,18 @@ export default function FrontuariLanding() {
     { name: 'Siloamazo', src: logoSiloamazo },
     { name: 'BioGene', src: logoBiogene },
     { name: 'Mary', src: logoMary },
-    { name: 'Polar', src: logoPolar },
+    { name: 'Empresas Polar', src: logoPolar },
     { name: 'Biomercados', src: logoBio },
+    { name: 'Inversiones lacteas', src: logoinverlactea },
+    { name: 'Frisulca', src: logofrisulca },
+    { name: 'Palmeral', src: logopalmeral },
+    { name: 'Agropecuaria San Simón', src: logoasasica },
+    { name: 'Agro Simón', src: logoagrosimon },
+    { name: 'Inversiones L55', src: logol55 },
+    { name: 'Hielo San Simón', src: logohielo },
+    { name: 'Snitch', src: logosnitch },
+    { name: 'Tubrica', src: logotubrica }
+
   ];
 
   const handleOpenCardModal = (card: typeof serviceCards[0]) => {
@@ -103,24 +339,29 @@ export default function FrontuariLanding() {
 
   return (
     <div className="min-h-screen bg-white selection:bg-primary selection:text-white">
+      {/* Inyección de animación para el parpadeo del cursor */}
+      <style>{cursorStyle}</style>
 
-      {/* 1. HEADER & NAVIGATION */}
-      <header className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-complementary/20 transition-all">
+      {/* HEADER CON CONTRASTE PARA EL LOGO */}
+      <header className="fixed top-0 w-full z-50 bg-slate-900/80 bg-white/100 backdrop-blur-md border-b border-white/10 transition-all">
         <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20 md:h-24 gap-4">
 
-            <img
-              decoding="async"
-              className="h-4 sm:h-6 md:h-7 w-auto shrink-0 object-contain my-auto"
-              src={logoFrontuari.src}
-              alt="frontuari"
-            />
+            {/* Contenedor blanco/translúcido para dar contraste y legibilidad al logo con texto negro */}
+            <div className="bg-white/95 hover:bg-white backdrop-blur-sm px-3.5 py-1.5 rounded-xl border border-white/20 transition-all flex items-center shrink-0">
+              <img
+                decoding="async"
+                className="h-6 sm:h-8 md:h-9 w-auto shrink-0 object-contain my-auto"
+                src={logoFrontuari.src}
+                alt="Frontuari"
+              />
+            </div>
 
-            <nav className="hidden md:flex items-center space-x-6 lg:space-x-10">
-              <a href="#inicio" className="text-secondary hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide">Inicio</a>
-              <a href="#nosotros" className="text-secondary hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide">Nosotros</a>
-              <a href="#servicios" className="text-secondary hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide">Servicios</a>
-              <a href="#casos" className="text-secondary hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide">Casos de Éxito</a>
+            <nav className="hidden md:flex items-center space-x-6 lg:space-x-10 text-black">
+              <a href="#inicio" className="text-slate-200 transition-colors font-bold text-sm uppercase tracking-wide text-black">Inicio</a>
+              <a href="#nosotros" className="text-slate-200 transition-colors font-bold text-sm uppercase tracking-wide text-black">Nosotros</a>
+              <a href="#servicios" className="text-slate-200 transition-colors font-bold text-sm uppercase tracking-wide text-black">Servicios</a>
+              <a href="#casos" className="text-slate-200 transition-colors font-bold text-sm uppercase tracking-wide text-black">Casos de Éxito</a>
 
               <button
                 className="bg-primary hover:bg-primary-hover text-white px-5 py-2.5 lg:px-6 lg:py-3 rounded-md font-bold transition-all transform hover:-translate-y-0.5 shadow-md text-sm"
@@ -132,7 +373,8 @@ export default function FrontuariLanding() {
 
             <div className="md:hidden">
               <button
-                className="text-secondary p-2 focus:outline-none"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="text-white p-2 focus:outline-none"
                 aria-expanded={isMenuOpen}
                 aria-label="Abrir menú de navegación"
               >
@@ -143,12 +385,12 @@ export default function FrontuariLanding() {
         </div>
 
         {isMenuOpen && (
-          <div className="md:hidden bg-white border-b border-complementary/20 absolute top-full left-0 w-full shadow-lg">
+          <div className="md:hidden bg-slate-900 border-b border-white/10 absolute top-full left-0 w-full shadow-lg text-black">
             <div className="px-6 pt-4 pb-6 space-y-4 flex flex-col">
-              <a href="#inicio" className="block text-secondary font-medium hover:text-primary transition-colors">Inicio</a>
-              <a href="#nosotros" className="block text-secondary font-medium hover:text-primary transition-colors">Nosotros</a>
-              <a href="#servicios" className="block text-secondary font-medium hover:text-primary transition-colors">Servicios</a>
-              <a href="#casos" className="block text-secondary font-medium hover:text-primary transition-colors">Casos de Éxito</a>
+              <a href="#inicio" className="block text-slate-200 font-medium hover:text-black transition-colors">Inicio</a>
+              <a href="#nosotros" className="block text-slate-200 font-medium hover:text-black transition-colors">Nosotros</a>
+              <a href="#servicios" className="block text-slate-200 font-medium hover:text-black transition-colors">Servicios</a>
+              <a href="#casos" className="block text-slate-200 font-medium hover:text-black transition-colors">Casos de Éxito</a>
               <button className="w-full bg-primary text-white px-6 py-3 rounded-md font-bold text-center">
                 Contáctanos
               </button>
@@ -157,38 +399,80 @@ export default function FrontuariLanding() {
         )}
       </header>
 
-      {/* HERO & CONTENT */}
+      {/* MAIN */}
       <main>
-        {/* HERO SECTION */}
-        <section id="inicio" className="pt-28 sm:pt-32 lg:pt-48 pb-12 sm:pb-16 lg:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            <div className="space-y-6 sm:space-y-8">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
-                Innovación y Compromiso Tecnológico para tu Empresa
-              </h1>
-              <p className="text-base sm:text-lg text-secondary/80 max-w-lg leading-relaxed">
-                Transformamos procesos operativos mediante soluciones de software corporativo a medida. Escalabilidad, seguridad y eficiencia estructural para negocios del mañana.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 pt-2 sm:pt-4">
-                <button className="w-full sm:w-auto bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-md font-bold flex items-center justify-center transition-all transform hover:-translate-y-1 shadow-soft">
-                  Inicia tu transformación <ArrowRight className="ml-2 shrink-0" size={20} />
-                </button>
-                <button className="w-full sm:w-auto bg-transparent border-2 border-complementary text-secondary hover:border-primary hover:text-primary px-8 py-4 rounded-md font-bold transition-all text-center">
-                  Conoce más
-                </button>
-              </div>
-            </div>
+        {/* SECCIÓN INICIO CON VIDEO DE FONDO */}
+        <div className="relative overflow-hidden bg-slate-950">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute inset-0 w-full h-full object-cover opacity-50 z-0 pointer-events-none"
+          >
+            <source src="/video/abstract_line3.webm" type="video/webm" />
+          </video>
 
-            <div className="relative w-full h-[280px] sm:h-[360px] lg:h-[500px] bg-complementary-light rounded-2xl overflow-hidden flex items-center justify-center border border-complementary/20 shadow-sm group">
-              <div className="absolute inset-0 bg-gradient-to-tr from-complementary-light to-white opacity-50"></div>
-              <Database className="w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 text-primary/20 group-hover:scale-110 transition-transform duration-700" />
-              <div className="absolute bottom-4 left-4 right-4 sm:bottom-10 sm:left-10 sm:right-10 bg-white/60 backdrop-blur-sm p-4 sm:p-6 rounded-xl border border-white">
-                <div className="h-2 w-1/3 bg-primary rounded-full mb-3"></div>
-                <div className="h-2 w-2/3 bg-complementary rounded-full"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-slate-950/40 to-slate-950 z-0 pointer-events-none" />
+
+          <section id="inicio" className="relative z-10 pt-28 sm:pt-32 lg:pt-48 pb-12 sm:pb-16 lg:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+
+              <div className="space-y-6 sm:space-y-8">
+                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight min-h-[120px] sm:min-h-[160px] text-white">
+                  <TypewriterHeading text="Innovación y Compromiso Tecnológico para tu Empresa" />
+                </h1>
+                <p className="text-base sm:text-lg text-slate-200 max-w-lg leading-relaxed drop-shadow-sm">
+                  Transformamos procesos operativos mediante soluciones de software corporativo a medida. Escalabilidad, seguridad y eficiencia estructural para negocios del mañana.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 pt-2 sm:pt-4">
+                  <button className="w-full sm:w-auto bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-md font-bold flex items-center justify-center transition-all transform hover:-translate-y-1 shadow-lg">
+                    Inicia tu transformación <ArrowRight className="ml-2 shrink-0" size={20} />
+                  </button>
+                  <button className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white border border-white/30 hover:border-white px-8 py-4 rounded-md font-bold transition-all text-center backdrop-blur-sm">
+                    Conoce más
+                  </button>
+                </div>
               </div>
+
+              <div className="relative w-full h-[280px] sm:h-[360px] lg:h-[450px] bg-white/95 backdrop-blur-md rounded-2xl overflow-hidden flex flex-col justify-between p-6 sm:p-8 border border-white/40 shadow-2xl group">
+
+                <div className="absolute inset-0 bg-[radial-gradient(#24588d_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.05] pointer-events-none" />
+                <Database className="absolute -right-6 -bottom-6 w-48 h-48 sm:w-64 sm:h-64 text-primary/10 group-hover:scale-105 transition-transform duration-700 pointer-events-none" />
+
+                <div className="relative z-10 flex items-center justify-between border-b border-complementary/15 pb-4">
+                  <div className="flex space-x-2">
+                    <div className="w-3 h-3 rounded-full bg-red-400/80"></div>
+                    <div className="w-3 h-3 rounded-full bg-amber-400/80"></div>
+                    <div className="w-3 h-3 rounded-full bg-emerald-400/80"></div>
+                  </div>
+                  <span className="text-xs font-mono font-semibold text-secondary/50 uppercase tracking-widest">
+                    Frontuari Tech Spec
+                  </span>
+                </div>
+                {/* NO HAY NADA, NO EXISTE */}
+                <div className="">
+                  <p className="text-secondary/60 text-xs sm:text-sm font-bold uppercase tracking-wider mb-2">
+                    Especialistas en:
+                  </p>
+                  <div className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-secondary min-h-[60px] flex items-center">
+                    <RotatingTypewriter words={heroWords} />
+                  </div>
+                </div>
+
+                <div className="relative z-10 pt-4 border-t border-complementary/15 flex items-center justify-between text-xs text-secondary/60">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span className="font-semibold text-secondary/80">Infraestructura Activa</span>
+                  </div>
+                  <span className="font-mono text-primary font-bold">v2026.1</span>
+                </div>
+
+              </div>
+
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
 
         {/* NOSOTROS SECTION */}
         <section id="nosotros" className="py-12 sm:py-16 lg:py-24 bg-white border-t border-complementary-light">
@@ -238,19 +522,17 @@ export default function FrontuariLanding() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-16 bg-complementary-light/40 p-6 sm:p-8 lg:p-10 rounded-2xl border border-complementary/15 shadow-sm">
-              <div className="lg:col-span-5 relative w-full h-full sm:h-auto lg:h-auto rounded-xl overflow-hidden shadow-md group">
+              <div className="lg:col-span-5 relative w-full h-64 sm:h-80 rounded-xl overflow-hidden shadow-md group flex flex-col justify-center items-center bg-white p-4">
                 <img
                   src={logoOpenSource.src}
                   alt="OpenSource Consulting Group - Alianza Estratégica"
-                  className="w-full h-full object-cover object-center"
+                  className="w-auto h-1/2 object-contain"
                 />
-                <div className="absolute inset-0 ring-1 ring-black/5 rounded-xl"></div>
                 <img
                   src={logoCombinado.src}
                   alt="Datacomm y Frontuari - Alianza Estratégica"
-                  className="w-full h-full object-cover object-center p-7 sm:p-8"
+                  className="w-auto h-1/2 object-contain p-2"
                 />
-                <div className="absolute inset-0 ring-1 ring-black/5 rounded-xl"></div>
               </div>
 
               <div className="lg:col-span-7 space-y-4 sm:space-y-6">
@@ -276,7 +558,7 @@ export default function FrontuariLanding() {
                 <Lightbulb size={40} className="text-primary mb-6" />
                 <h3 className="text-xl font-bold mb-3">Innovación</h3>
                 <p className="text-secondary/70 leading-relaxed">
-                  Adoptamos y adaptamos tecnologías de vanguardia para crear arquitecturas digitales que rompen paradigms.
+                  Adoptamos y adaptamos tecnologías de vanguardia para crear arquitecturas digitales que rompen paradigmas.
                 </p>
               </div>
 
@@ -312,11 +594,11 @@ export default function FrontuariLanding() {
                     onClick={() => handleOpenCardModal(card)}
                     className="group cursor-pointer overflow-hidden rounded-xl shadow-md border border-complementary/20 bg-white flex flex-col transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
                   >
-                    <div className="relative h-48 w-full overflow-hidden bg-gray-100">
+                    <div className="relative h-48 w-full overflow-hidden bg-slate-50 flex items-center justify-center p-4">
                       <img
                         src={card.image.src}
                         alt={card.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
 
@@ -335,36 +617,27 @@ export default function FrontuariLanding() {
           </div>
         </section>
 
-        {/* CASOS DE ÉXITO */}
-        <section id="casos" className="py-16 sm:py-20 lg:py-24 bg-white border-t border-complementary-light">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-              <span className="text-primary font-bold text-xs sm:text-sm uppercase tracking-wider bg-primary/10 px-3 py-1 rounded-full inline-block mb-3">
-                Casos de Éxito
-              </span>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-secondary tracking-tight mb-4">
-                Empresas que han confiado en nosotros
-              </h2>
-              <p className="text-secondary/70 text-base sm:text-lg leading-relaxed">
-                Estas son algunas de las empresas que han confiado en nuestros servicios para sus necesidades tecnológicas y de desarrollo.
-              </p>
-            </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 sm:gap-8 items-center justify-center">
-              {enterpriseLogos.map((item, index) => (
-                <div
-                  key={index}
-                  className="bg-complementary-light/30 hover:bg-white p-6 rounded-xl transition-all duration-300 flex items-center justify-center h-28 group"
-                >
-                  <img
-                    src={item.src.src}
-                    alt={item.name}
-                    className="max-h-50 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                  />
-                </div>
-              ))}
-            </div>
+        {/* CASOS DE ÉXITO */}
+        <section
+          id="casos"
+          className="py-16 sm:py-20 lg:py-24 border-t border-complementary-light overflow-hidden"
+          style={{ backgroundColor: '#011325' }}
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 sm:mb-12 text-center">
+            <span className="text-white font-bold text-xs sm:text-sm uppercase tracking-wider bg-white/15 px-3.5 py-1.5 rounded-full inline-block mb-3 border border-white/20">
+              Casos de Éxito
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-4">
+              Empresas que han confiado en nosotros
+            </h2>
+            <p className="text-white/80 text-base sm:text-lg leading-relaxed max-w-3xl mx-auto">
+              Nuestra trayectoria respaldada por líderes del sector tecnológico e industrial.
+            </p>
           </div>
+
+          {/* Ticker dinámico con fondo blanco y escalado al centro */}
+          <EnterpriseLogosTicker logos={enterpriseLogos} />
         </section>
       </main>
 
@@ -378,25 +651,21 @@ export default function FrontuariLanding() {
             className="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl my-8 transform transition-all"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Cabecera / Banner / Carrusel del Modal */}
             <div className="relative w-full h-80 sm:h-[400px] bg-slate-900 flex items-center justify-center overflow-hidden">
               {selectedCard.gallery && selectedCard.gallery.length > 0 ? (
                 <>
-                  {/* Fondo difuminado para rellenar de forma limpia la relación de aspecto vertical del móvil */}
                   <img
                     src={selectedCard.gallery[currentSlide].src}
                     alt="Fondo Difuminado"
                     className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-45 scale-110 pointer-events-none"
                   />
 
-                  {/* Captura de Pantalla en Proporción Correcta */}
                   <img
                     src={selectedCard.gallery[currentSlide].src}
                     alt={`${selectedCard.title} - Captura ${currentSlide + 1}`}
                     className="relative z-10 max-h-[88%] w-auto object-contain rounded-2xl shadow-2xl border border-white/20 transition-all duration-300"
                   />
 
-                  {/* Controles de Navegación del Carrusel */}
                   {selectedCard.gallery.length > 1 && (
                     <>
                       <button
@@ -420,7 +689,6 @@ export default function FrontuariLanding() {
                         <ChevronRight size={22} />
                       </button>
 
-                      {/* Indicadores en Puntos */}
                       <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex gap-2 bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-sm">
                         {selectedCard.gallery.map((_, idx) => (
                           <button
@@ -429,9 +697,8 @@ export default function FrontuariLanding() {
                               e.stopPropagation();
                               setCurrentSlide(idx);
                             }}
-                            className={`h-2 rounded-full transition-all ${
-                              currentSlide === idx ? 'bg-white w-5' : 'bg-white/50 w-2'
-                            }`}
+                            className={`h-2 rounded-full transition-all ${currentSlide === idx ? 'bg-white w-5' : 'bg-white/50 w-2'
+                              }`}
                             aria-label={`Ir a imagen ${idx + 1}`}
                           />
                         ))}
@@ -443,11 +710,10 @@ export default function FrontuariLanding() {
                 <img
                   src={selectedCard.image.src}
                   alt={selectedCard.title}
-                  className="w-full h-full object-cover"
+                  className="max-h-[80%] w-auto object-contain"
                 />
               )}
 
-              {/* Botón Cerrar */}
               <button
                 onClick={() => setSelectedCard(null)}
                 className="absolute top-4 right-4 z-30 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors"
@@ -488,7 +754,6 @@ export default function FrontuariLanding() {
             className="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl my-8 transform transition-all flex flex-col max-h-[85vh]"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header del Modal */}
             <div className="px-6 py-5 border-b border-complementary/15 flex items-center justify-between bg-complementary-light/30">
               <h3 className="text-xl sm:text-2xl font-bold text-secondary">
                 Política de Privacidad
@@ -502,7 +767,6 @@ export default function FrontuariLanding() {
               </button>
             </div>
 
-            {/* Cuerpo con Scroll */}
             <div className="p-6 sm:p-8 space-y-4 overflow-y-auto text-secondary/80 text-sm sm:text-base leading-relaxed">
               <p>
                 Frontuari, C.A., operando bajo la marca OpenSource Consulting Group, se compromete a proteger la privacidad y confidencialidad de la información proporcionada por sus clientes en servicios de software corporativo, infraestructura, desarrollo móvil, análisis de datos y bases de datos.
@@ -515,7 +779,6 @@ export default function FrontuariLanding() {
               </p>
             </div>
 
-            {/* Footer del Modal */}
             <div className="px-6 py-4 border-t border-complementary/10 bg-gray-50 flex justify-end">
               <button
                 onClick={() => setIsPrivacyOpen(false)}
@@ -578,7 +841,7 @@ export default function FrontuariLanding() {
             &copy; {new Date().getFullYear()} Frontuari, C.A. Todos los derechos reservados.
           </p>
           <p className="text-xs text-complementary text-center md:text-right">
-            Diseñado con precisión y excelencia.
+            No ofrecemos software, ofrecemos soluciones.
           </p>
         </div>
       </footer>
