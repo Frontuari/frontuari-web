@@ -8,7 +8,13 @@ import {
   ChevronLeft, ChevronRight
 } from 'lucide-react';
 
-function EnterpriseLogosTicker({ logos }: { logos: { name: string; src: any }[] }) {
+type EnterpriseLogo = {
+  name: string;
+  src: any;
+  scale?: number; // Factor de escala individual (ej: 1.2, 0.85, 1.4)
+};
+
+function EnterpriseLogosTicker({ logos }: { logos: EnterpriseLogo[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -30,11 +36,13 @@ function EnterpriseLogosTicker({ logos }: { logos: { name: string; src: any }[] 
           // Distancia normalizada: 0 en el centro exacto, 1 en los bordes
           const normDistance = Math.min(distance / maxDistance, 1);
 
-          // Escala base en bordes (~1.0) y máximo escalado al centro (~1.45)
-          const scale = 2 - normDistance * 0.45;
+          // Escala base en bordes (~0.75) y máximo escalado al centro (~1.2)
+          const scale = 1
+          //  1.2 - normDistance * 0.45;
           const opacity = 0.65 + (1 - normDistance) * 0.35;
 
           item.style.transform = `scale(${scale.toFixed(3)})`;
+          
           item.style.opacity = opacity.toFixed(2);
         });
       }
@@ -46,12 +54,10 @@ function EnterpriseLogosTicker({ logos }: { logos: { name: string; src: any }[] 
   }, []);
 
   return (
-    /* Área específica detrás de los logos completamente blanca */
     <div className="relative w-full py-12 bg-white border-y border-slate-200/80 shadow-inner">
-
-      {/* Texto de marquesina en el fondo: Azul desaturado con baja opacidad */}
+      {/* Texto de marquesina en el fondo */}
       <div className="absolute top-3 w-full overflow-hidden pointer-events-none select-none">
-        <div className="animate-ticker flex whitespace-nowrap text-xs sm:text-sm font-mono font-black text-[#00356b]/20 tracking-[0.3em] uppercase">
+        <div className="animate-ticker flex whitespace-nowrap text-xs sm:text-sm font-mono font-black text-[#00356b]/60 tracking-[0.3em] uppercase">
           <span className="mr-8">
             • CASOS DE ÉXITO • ALIANZAS ESTRATÉGICAS • TRANSFORMACIÓN DIGITAL • FRONTUARI ERP • SOLUCIONES EMPRESARIALES • CONFIANZA Y RENDIMIENTO
           </span>
@@ -63,29 +69,39 @@ function EnterpriseLogosTicker({ logos }: { logos: { name: string; src: any }[] 
 
       {/* Carcasa del carrusel */}
       <div ref={containerRef} className="relative overflow-hidden w-full flex items-center py-4">
-        {/* Degradados laterales blancos para difuminar entrada y salida */}
+        {/* Degradados laterales blancos */}
         <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-40 bg-gradient-to-r from-white via-white/90 to-transparent z-20 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-40 bg-gradient-to-l from-white via-white/90 to-transparent z-20 pointer-events-none" />
 
         {/* Ticker continuo */}
-        <div ref={trackRef} className="animate-ticker flex items-center gap-10 sm:gap-14 px-4">
+        {/* acá pones el gap para separaciónb entre los logos lmao */}
+        <div ref={trackRef} className="animate-ticker flex items-center gap-60 sm:gap-14 px-4">
           {[...logos, ...logos].map((item, index) => (
             <div
               key={index}
-              /* Contenedor del logo 100% transparente y dimensiones más amplias */
-              className="ticker-item shrink-0 bg-transparent w-48 sm:w-60 h-40 sm:h-44 px-4 py-2 flex flex-col items-center justify-center gap-3 transition-transform duration-75 group cursor-pointer"
+              className="ticker-item shrink-0 bg-transparent w-48 sm:w-60 h-32 sm:h-40 px-4 flex items-center justify-center transition-transform duration-75 group cursor-pointer"
             >
-              {/* Logos con mayor tamaño general */}
-              <img
-                src={item.src.src}
-                alt={item.name}
-                className="max-h-20 sm:max-h-24 max-w-[170px] sm:max-w-[210px] w-auto h-auto object-contain filter grayscale group-hover:grayscale-0 transition-all duration-300"
-              />
-              <span className="text-xs sm:text-sm font-bold text-slate-800 group-hover:text-primary transition-colors text-center truncate max-w-full">
-                {item.name}
-              </span>
+              {/* Logo con escala individual y límites de tamaño generales más amplios */}
+              <div style={{ transform: `scale(${item.scale ?? 1})` }}>
+                <img
+                  src={item.src.src}
+                  alt={item.name}
+                  className="max-h-24 sm:max-h-32 max-w-[200px] sm:max-w-[260px] w-auto h-auto object-contain transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-1 group-hover:drop-shadow-md"
+                />
+              </div> 
             </div>
           ))}
+        </div>
+      </div>
+      {/* Texto de marquesina en el fondo */}
+      <div className="absolute bottom-3 w-full overflow-hidden pointer-events-none select-none">
+        <div className="animate-ticker flex whitespace-nowrap text-xs sm:text-sm font-mono font-black text-[#00356b]/60 tracking-[0.3em] uppercase">
+          <span className="mr-8">
+            • SOLUCIONES INTEGRALES • COMPROMISO E INNOVACIÓN • SERVICIO DE CALIDAD • FRONTUARI ERP • EFICIENCIA Y ESCALABILIDAD • PROFESIONALIDAD Y EXCELECNIA
+          </span>
+          <span className="mr-8">
+            • SOLUCIONES INTEGRALES • COMPROMISO E INNOVACIÓN • SERVICIO DE CALIDAD • FRONTUARI ERP • EFICIENCIA Y ESCALABILIDAD • PROFESIONALIDAD Y EXCELECNIA
+          </span>
         </div>
       </div>
     </div>
@@ -307,30 +323,31 @@ export default function FrontuariLanding() {
     }
   ];
 
-  const enterpriseLogos = [
-    { name: 'Coposa', src: logoCoposa },
-    { name: 'ANCA', src: logoAnca },
-    { name: 'Inversiones Porcinas', src: logoPorcina },
-    { name: 'Arichuna', src: logoArichuna },
-    { name: 'Las Plumas', src: logoLasPlumas },
-    { name: 'Tanapo', src: logoTanapo },
-    { name: 'Covencaucho', src: logoCovencauchos },
-    { name: 'Siloamazo', src: logoSiloamazo },
-    { name: 'BioGene', src: logoBiogene },
-    { name: 'Mary', src: logoMary },
-    { name: 'Empresas Polar', src: logoPolar },
-    { name: 'Biomercados', src: logoBio },
-    { name: 'Inversiones lacteas', src: logoinverlactea },
-    { name: 'Frisulca', src: logofrisulca },
-    { name: 'Palmeral', src: logopalmeral },
-    { name: 'Agropecuaria San Simón', src: logoasasica },
-    { name: 'Agro Simón', src: logoagrosimon },
-    { name: 'Inversiones L55', src: logol55 },
-    { name: 'Hielo San Simón', src: logohielo },
-    { name: 'Snitch', src: logosnitch },
-    { name: 'Tubrica', src: logotubrica }
-
+const enterpriseLogos: { name: string; src: any; scale?: number }[] = [
+    { name: 'Coposa', src: logoCoposa , scale: 1.67 },
+    { name: 'ANCA', src: logoAnca, scale: 1.5 }, // Ejemplo: agrandar ANCA un 25%
+    { name: 'Inversiones Porcinas', src: logoPorcina, scale: 1.5 },
+    { name: 'Arichuna', src: logoArichuna , scale: 1.9 },
+    { name: 'Las Plumas', src: logoLasPlumas , scale: 1.6 },
+    { name: 'Tanapo', src: logoTanapo, scale: 1.5  },
+    { name: 'Covencaucho', src: logoCovencauchos, scale: 2.1  },
+    { name: 'Siloamazo', src: logoSiloamazo , scale: 2},
+    { name: 'BioGene', src: logoBiogene , scale: 2.1  },
+    { name: 'Mary', src: logoMary , scale: 1.96},
+    { name: 'Empresas Polar', src: logoPolar, scale: 1.82 }, // Ejemplo: agrandar Polar un 20%
+    { name: 'Biomercados', src: logoBio , scale: 1.67 },
+    { name: 'Inversiones lacteas', src: logoinverlactea , scale: 1.1},
+    { name: 'Frisulca', src: logofrisulca , scale: 1.1},
+    { name: 'Palmeral', src: logopalmeral , scale: 1},
+    { name: 'Agropecuaria San Simón', src: logoasasica , scale: 1},
+    { name: 'Agro Simón', src: logoagrosimon , scale: 1},
+    { name: 'Inversiones L55', src: logol55 , scale: 1.1},
+    { name: 'Hielo San Simón', src: logohielo , scale: 1},
+    { name: 'Snitch', src: logosnitch , scale: 1.33},
+    { name: 'Tubrica', src: logotubrica , scale: 1.2}
   ];
+
+  
 
   const handleOpenCardModal = (card: typeof serviceCards[0]) => {
     setSelectedCard(card);
@@ -357,11 +374,12 @@ export default function FrontuariLanding() {
               />
             </div>
 
-            <nav className="hidden md:flex items-center space-x-6 lg:space-x-10 text-black">
-              <a href="#inicio" className="text-slate-200 transition-colors font-bold text-sm uppercase tracking-wide text-black">Inicio</a>
-              <a href="#nosotros" className="text-slate-200 transition-colors font-bold text-sm uppercase tracking-wide text-black">Nosotros</a>
-              <a href="#servicios" className="text-slate-200 transition-colors font-bold text-sm uppercase tracking-wide text-black">Servicios</a>
-              <a href="#casos" className="text-slate-200 transition-colors font-bold text-sm uppercase tracking-wide text-black">Casos de Éxito</a>
+            <nav className="hidden md:flex items-center space-x-6 lg:space-x-10 ">
+              
+              <a href="#inicio" className="transition-colors text-sm uppercase tracking-wid transform hover:scale-105">Inicio</a>
+              <a href="#nosotros" className="transition-colors text-sm uppercase tracking-wide text-black transform hover:scale-105">Nosotros</a>
+              <a href="#servicios" className="transition-colors text-sm uppercase tracking-wide text-black transform hover:scale-105">Servicios</a>
+              <a href="#casos" className="transition-colors text-sm uppercase tracking-wide text-black transform hover:scale-105">Casos de Éxito</a>
 
               <button
                 className="bg-primary hover:bg-primary-hover text-white px-5 py-2.5 lg:px-6 lg:py-3 rounded-md font-bold transition-all transform hover:-translate-y-0.5 shadow-md text-sm"
@@ -420,7 +438,7 @@ export default function FrontuariLanding() {
 
               <div className="space-y-6 sm:space-y-8">
                 <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight min-h-[120px] sm:min-h-[160px] text-white">
-                  <TypewriterHeading text="Innovación y Compromiso Tecnológico para tu Empresa" />
+                  <TypewriterHeading text="No vendemos Software, vendemos soluciones" />
                 </h1>
                 <p className="text-base sm:text-lg text-slate-200 max-w-lg leading-relaxed drop-shadow-sm">
                   Transformamos procesos operativos mediante soluciones de software corporativo a medida. Escalabilidad, seguridad y eficiencia estructural para negocios del mañana.
@@ -441,11 +459,7 @@ export default function FrontuariLanding() {
                 <Database className="absolute -right-6 -bottom-6 w-48 h-48 sm:w-64 sm:h-64 text-primary/10 group-hover:scale-105 transition-transform duration-700 pointer-events-none" />
 
                 <div className="relative z-10 flex items-center justify-between border-b border-complementary/15 pb-4">
-                  <div className="flex space-x-2">
-                    <div className="w-3 h-3 rounded-full bg-red-400/80"></div>
-                    <div className="w-3 h-3 rounded-full bg-amber-400/80"></div>
-                    <div className="w-3 h-3 rounded-full bg-emerald-400/80"></div>
-                  </div>
+                  
                   <span className="text-xs font-mono font-semibold text-secondary/50 uppercase tracking-widest">
                     Frontuari Tech Spec
                   </span>
@@ -462,8 +476,7 @@ export default function FrontuariLanding() {
 
                 <div className="relative z-10 pt-4 border-t border-complementary/15 flex items-center justify-between text-xs text-secondary/60">
                   <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span className="font-semibold text-secondary/80">Infraestructura Activa</span>
+                    
                   </div>
                   <span className="font-mono text-primary font-bold">v2026.1</span>
                 </div>
@@ -474,8 +487,54 @@ export default function FrontuariLanding() {
           </section>
         </div>
 
+        
+        {/* SERVICES SECTION */}
+        <section id="servicios" className="py-12 sm:py-16 lg:py-24 bg-complementary-light px-4 sm:px-6 lg:px-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 sm:mb-16">
+              <div className="max-w-2xl">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">Soluciones Tecnológicas Integrales</h2>
+                <p className="text-secondary/70 text-base sm:text-lg">
+                  Infraestructura, desarrollo y análisis de datos enfocados en el rendimiento empresarial.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+              {serviceCards.map((card) => {
+                const IconComponent = card.icon;
+                return (
+                  <div
+                    key={card.id}
+                    onClick={() => handleOpenCardModal(card)}
+                    className="group cursor-pointer overflow-hidden rounded-xl shadow-md border border-complementary/20 bg-white flex flex-col transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
+                  >
+                    <div className="relative h-48 w-full overflow-hidden bg-slate-50 flex items-center justify-center p-4">
+                      <img
+                        src={card.image.src}
+                        alt={card.title}
+                        className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+
+                    <div className="p-4 bg-white flex items-center justify-between gap-3 border-t border-complementary/10 z-10">
+                      <h3 className="text-secondary font-bold text-base leading-snug group-hover:text-primary transition-colors duration-300">
+                        {card.title}
+                      </h3>
+                      <div className="p-2.5 rounded-lg bg-complementary-light text-secondary/70 group-hover:bg-primary group-hover:text-white group-hover:shadow-md transition-all duration-300 shrink-0">
+                        <IconComponent size={20} className="transition-transform duration-300 group-hover:scale-110" />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+
+
         {/* NOSOTROS SECTION */}
-        <section id="nosotros" className="py-12 sm:py-16 lg:py-24 bg-white border-t border-complementary-light">
+        <section id="nosotros" className="bg-white border-t border-complementary-light">
           <div className="relative w-full py-16 sm:py-20 mb-12 sm:mb-16 overflow-hidden bg-secondary/5 border-y border-complementary/10">
             <div className="absolute inset-0 z-0">
               <img
@@ -569,50 +628,6 @@ export default function FrontuariLanding() {
                   No somos solo proveedores; nos integramos como un brazo tecnológico alineado a la cultura de tu empresa.
                 </p>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* SERVICES SECTION */}
-        <section id="servicios" className="py-12 sm:py-16 lg:py-24 bg-complementary-light px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 sm:mb-16">
-              <div className="max-w-2xl">
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">Soluciones Tecnológicas Integrales</h2>
-                <p className="text-secondary/70 text-base sm:text-lg">
-                  Infraestructura, desarrollo y análisis de datos enfocados en el rendimiento empresarial.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-              {serviceCards.map((card) => {
-                const IconComponent = card.icon;
-                return (
-                  <div
-                    key={card.id}
-                    onClick={() => handleOpenCardModal(card)}
-                    className="group cursor-pointer overflow-hidden rounded-xl shadow-md border border-complementary/20 bg-white flex flex-col transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
-                  >
-                    <div className="relative h-48 w-full overflow-hidden bg-slate-50 flex items-center justify-center p-4">
-                      <img
-                        src={card.image.src}
-                        alt={card.title}
-                        className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105"
-                      />
-                    </div>
-
-                    <div className="p-4 bg-white flex items-center justify-between gap-3 border-t border-complementary/10 z-10">
-                      <h3 className="text-secondary font-bold text-base leading-snug group-hover:text-primary transition-colors duration-300">
-                        {card.title}
-                      </h3>
-                      <div className="p-2.5 rounded-lg bg-complementary-light text-secondary/70 group-hover:bg-primary group-hover:text-white group-hover:shadow-md transition-all duration-300 shrink-0">
-                        <IconComponent size={20} className="transition-transform duration-300 group-hover:scale-110" />
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
             </div>
           </div>
         </section>
@@ -812,7 +827,7 @@ export default function FrontuariLanding() {
             <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Enlaces Rápidos</h4>
             <ul className="space-y-3">
               <li><a href="#inicio" className="text-complementary hover:text-white transition-colors text-sm">Inicio</a></li>
-              <li><a href="#nosotros" className="text-complementary hover:text-white transition-colors text-sm">Nuestra Empresa</a></li>
+              <li><a href="#nosotros" className="text-complementary hover:text-white transition-colors text-sm">Nuestra Esencia</a></li>
               <li><a href="#servicios" className="text-complementary hover:text-white transition-colors text-sm">Servicios IT</a></li>
               <li><a href="#casos" className="text-complementary hover:text-white transition-colors text-sm">Casos de Éxito</a></li>
             </ul>
@@ -829,8 +844,8 @@ export default function FrontuariLanding() {
                   Política de Privacidad
                 </button>
               </li>
-              <li><a href="#" className="text-complementary hover:text-white transition-colors text-sm">Términos de Servicio</a></li>
-              <li><a href="mailto:contacto@frontuari.com" className="text-complementary hover:text-primary transition-colors text-sm mt-4 block">contacto@frontuari.com</a></li>
+              
+              <li><a href="mailto:frontuari@gmail.com" className="text-complementary hover:text-primary transition-colors text-sm mt-4 block">frontuari@gmail.com</a></li>
             </ul>
           </div>
 
