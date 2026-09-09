@@ -14,6 +14,7 @@ type EnterpriseLogo = {
   scale?: number; // Factor de escala individual (ej: 1.2, 0.85, 1.4)
 };
 
+
 function EnterpriseLogosTicker({ logos }: { logos: EnterpriseLogo[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -36,13 +37,11 @@ function EnterpriseLogosTicker({ logos }: { logos: EnterpriseLogo[] }) {
           // Distancia normalizada: 0 en el centro exacto, 1 en los bordes
           const normDistance = Math.min(distance / maxDistance, 1);
 
-          // Escala base en bordes (~0.75) y máximo escalado al centro (~1.2)
-          const scale = 1
-          //  1.2 - normDistance * 0.45;
+          // Escala y opacidad dinámica 
+          const scale = 1;
           const opacity = 0.65 + (1 - normDistance) * 0.35;
 
           item.style.transform = `scale(${scale.toFixed(3)})`;
-          
           item.style.opacity = opacity.toFixed(2);
         });
       }
@@ -57,7 +56,7 @@ function EnterpriseLogosTicker({ logos }: { logos: EnterpriseLogo[] }) {
     <div className="relative w-full py-12 bg-white border-y border-slate-200/80 shadow-inner">
       {/* Texto de marquesina en el fondo */}
       <div className="absolute top-3 w-full overflow-hidden pointer-events-none select-none">
-        <div className="animate-ticker flex whitespace-nowrap text-xs sm:text-sm font-mono font-black text-[#00356b]/60 tracking-[0.3em] uppercase">
+        <div className="animate-ticker flex whitespace-nowrap text-xs sm:text-sm font-mono font-black text-[#00356b]/35 tracking-[0.3em] uppercase">
           <span className="mr-8">
             • CASOS DE ÉXITO • ALIANZAS ESTRATÉGICAS • TRANSFORMACIÓN DIGITAL • FRONTUARI ERP • SOLUCIONES EMPRESARIALES • CONFIANZA Y RENDIMIENTO
           </span>
@@ -73,29 +72,29 @@ function EnterpriseLogosTicker({ logos }: { logos: EnterpriseLogo[] }) {
         <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-40 bg-gradient-to-r from-white via-white/90 to-transparent z-20 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-40 bg-gradient-to-l from-white via-white/90 to-transparent z-20 pointer-events-none" />
 
-        {/* Ticker continuo */}
-        {/* acá pones el gap para separaciónb entre los logos lmao */}
-        <div ref={trackRef} className="animate-ticker flex items-center gap-60 sm:gap-14 px-4">
+        {/* Ticker continuo: SIN gap y SIN padding lateral para que el -50% sea simétrico */}
+        <div ref={trackRef} className="animate-ticker flex items-center">
           {[...logos, ...logos].map((item, index) => (
             <div
               key={index}
-              className="ticker-item shrink-0 bg-transparent w-48 sm:w-60 h-32 sm:h-40 px-4 flex items-center justify-center transition-transform duration-75 group cursor-pointer"
+              /* Margen derecho asegura que todos los logos mantengan separación y se respete el w-auto (sin w-48) */
+              className="ticker-item shrink-0 h-32 sm:h-40 flex items-center justify-center transition-transform duration-75 group cursor-pointer mr-16 sm:mr-24"
             >
-              {/* Logo con escala individual y límites de tamaño generales más amplios */}
-              <div style={{ transform: `scale(${item.scale ?? 1})` }}>
-                <img
-                  src={item.src.src}
-                  alt={item.name}
-                  className="max-h-24 sm:max-h-32 max-w-[200px] sm:max-w-[260px] w-auto h-auto object-contain transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-1 group-hover:drop-shadow-md"
-                />
-              </div> 
+              <img
+                src={item.src.src}
+                alt={item.name}
+                /* La altura se calcula con base a la escala. El w-auto del tailwind calcula el ancho perfecto */
+                style={{ height: `${(item.scale ?? 1) * 45}%` }}
+                className="w-auto max-w-[200px] sm:max-w-[260px] object-contain transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-1 group-hover:drop-shadow-md"
+              />
             </div>
           ))}
         </div>
       </div>
+      
       {/* Texto de marquesina en el fondo */}
       <div className="absolute bottom-3 w-full overflow-hidden pointer-events-none select-none">
-        <div className="animate-ticker flex whitespace-nowrap text-xs sm:text-sm font-mono font-black text-[#00356b]/60 tracking-[0.3em] uppercase">
+        <div className="animate-ticker flex whitespace-nowrap text-xs sm:text-sm font-mono font-black text-[#00356b]/35 tracking-[0.3em] uppercase">
           <span className="mr-8">
             • SOLUCIONES INTEGRALES • COMPROMISO E INNOVACIÓN • SERVICIO DE CALIDAD • FRONTUARI ERP • EFICIENCIA Y ESCALABILIDAD • PROFESIONALIDAD Y EXCELECNIA
           </span>
@@ -114,12 +113,15 @@ import logoOpenSource from '../assets/images/icons/opensource.png';
 import logoCombinado from '../assets/images/icons/Logo-Frontuari-Datacomm.png';
 import bannerNosotros from '../assets/images/banners/banner-nosotros.jpg';
 import nombreFrontuari from '../assets/images/nombre-frontuari.jpg';
+import bannerTI from '../assets/images/banners/gestion-ti.webp'
+import bannerBI from '../assets/images/banners/power-bi.webp';
 
 // APP MOVIL SCREENSHOTS
 import appMovil1 from '../assets/images/banners/appmovil/appmovil1.jpeg';
 import appMovil2 from '../assets/images/banners/appmovil/appmovil2.jpeg';
 import appMovil3 from '../assets/images/banners/appmovil/iconss2.png';
 import appMovil4 from '../assets/images/banners/appmovil/appmovil4.jpeg';
+import appMovil5 from '../assets/images/banners/appmovil/appmovil5.jpeg';
 
 // LOGO DE IDEMPIERE
 import logoIdempiere from '../assets/images/icons/idempiereLogo.png';
@@ -169,6 +171,20 @@ const cursorStyle = `
   .animate-ticker:hover {
     animation-play-state: paused;
   }
+
+  @keyframes moveBackgroundDots {
+  
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 48px 48px;
+    }
+  }
+  .animate-moving-dots {
+    animation: moveBackgroundDots 5s linear infinite;
+  }
+
 `;
 
 // 1. TYPEWRITER HEADING (Título Principal)
@@ -262,6 +278,23 @@ export default function FrontuariLanding() {
 
   const [isLogosVisible, setIsLogosVisible] = useState(false);
   const logosSectionRef = useRef<HTMLDivElement>(null);
+  const [isServiciosVisible, setIsServiciosVisible] = useState(false);
+  const serviciosSectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsServiciosVisible(entry.isIntersecting);
+      },
+      { threshold: 0.25 } // Detecta la entrada y salida de la sección
+    );
+
+    if (serviciosSectionRef.current) {
+      observer.observe(serviciosSectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   const heroWords = [
     "Innovación",
@@ -304,50 +337,54 @@ export default function FrontuariLanding() {
       title: 'Desarrollo Móvil',
       icon: Smartphone,
       image: appMovil3,
-      gallery: [appMovil1, appMovil2, appMovil3, appMovil4],
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur hendrerit, neque at feugiat vulputate, nunc magna eleifend magna, vel placerat diam dui in nisl. Phasellus sodales cursus nisi, ac tempor nisi porta egestas.'
+      gallery: [appMovil1, appMovil2, appMovil3, appMovil4, appMovil5],
+      description: `Diseñamos y desarrollamos aplicaciones móviles a la medida de tus necesidades empresariales para llevar la operativa de tu negocio a cualquier lugar. Contamos con soluciones especializadas como nuestra plataforma de Fuerza de Ventas, orientada a la toma y gestión eficiente de pedidos en campo, y nuestra aplicación de Aprobación de Documentos, diseñada para agilizar flujos de trabajo y autorizar procesos de forma rápida y segura.
+      
+      Conectamos tus operaciones móviles directamente con tus sistemas centrales para garantizar agilidad, control y respuestas al instante.`
     },
     {
       id: 3,
-      title: 'Análisis de Datos & Métricas',
+      title: 'Consultoría en Gestión de Información y ERP',
       icon: LineChart,
-      image: nombreFrontuari,
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tristique massa in magna finibus, et consectetur leo posuere. Aliquam nec hendrerit leo, sed ultrices quam. Sed cursus pretium eros id eleifend.'
+      image: bannerTI,
+      description: `Diagnosticamos, estructuramos y centralizamos la información de tu empresa para convertir datos dispersos en decisiones estratégicas. A través de nuestra consultoría especializada, evaluamos tus flujos de trabajo, eliminamos silos de información e implementamos arquitecturas ERP adaptadas exactamente a la realidad de tu operativa.
+      
+      Te acompañamos a unificar finanzas, inventario y procesos clave en un solo ecosistema confiable, reduciendo costos operativos y garantizando el control total de tu negocio en tiempo real.`
     },
     {
       id: 4,
-      title: 'Gestión de Bases de Datos',
+      title: 'Power BI',
       icon: Database,
-      image: nombreFrontuari,
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce vulputate, justo id imperdiet pharetra, sapien orci hendrerit dolor, vitae imperdiet diam arcu in purus. Donec finibus sapien sit amet lorem accumsan facilisis.'
+      image: bannerBI,
+      description: `Convierte la sobrecarga de datos en decisiones claras y rentables a través de nuestras soluciones de Inteligencia de Negocios con Power BI. Conectamos todas tus fuentes de información, incluyendo ERP, sistemas contables y bases de datos, en tableros dinámicos en tiempo real que visibilizan tus indicadores clave de rendimiento de un vistazo. Empodera a tu equipo directivo con reportes interactivos que identifican oportunidades de ahorro, detectan ineficiencias y predicen tendencias de crecimiento sin depender de reportes manuales.`
     }
   ];
 
-const enterpriseLogos: { name: string; src: any; scale?: number }[] = [
-    { name: 'Coposa', src: logoCoposa , scale: 1.67 },
-    { name: 'ANCA', src: logoAnca, scale: 1.5 }, // Ejemplo: agrandar ANCA un 25%
-    { name: 'Inversiones Porcinas', src: logoPorcina, scale: 1.5 },
-    { name: 'Arichuna', src: logoArichuna , scale: 1.9 },
-    { name: 'Las Plumas', src: logoLasPlumas , scale: 1.6 },
-    { name: 'Tanapo', src: logoTanapo, scale: 1.5  },
-    { name: 'Covencaucho', src: logoCovencauchos, scale: 2.1  },
-    { name: 'Siloamazo', src: logoSiloamazo , scale: 2},
-    { name: 'BioGene', src: logoBiogene , scale: 2.1  },
-    { name: 'Mary', src: logoMary , scale: 1.96},
-    { name: 'Empresas Polar', src: logoPolar, scale: 1.82 }, // Ejemplo: agrandar Polar un 20%
-    { name: 'Biomercados', src: logoBio , scale: 1.67 },
-    { name: 'Inversiones lacteas', src: logoinverlactea , scale: 1.1},
-    { name: 'Frisulca', src: logofrisulca , scale: 1.1},
-    { name: 'Palmeral', src: logopalmeral , scale: 1},
-    { name: 'Agropecuaria San Simón', src: logoasasica , scale: 1},
-    { name: 'Agro Simón', src: logoagrosimon , scale: 1},
-    { name: 'Inversiones L55', src: logol55 , scale: 1.1},
-    { name: 'Hielo San Simón', src: logohielo , scale: 1},
-    { name: 'Snitch', src: logosnitch , scale: 1.33},
-    { name: 'Tubrica', src: logotubrica , scale: 1.2}
+  const enterpriseLogos: { name: string; src: any; scale?: number }[] = [
+    { name: 'Coposa', src: logoCoposa, scale: 2.67 },
+    { name: 'ANCA', src: logoAnca, scale: 2.5 }, // Ejemplo: agrandar ANCA un 25%
+    { name: 'Inversiones Porcinas', src: logoPorcina, scale: 2.5 },
+    { name: 'Arichuna', src: logoArichuna, scale: 2.9 },
+    { name: 'Las Plumas', src: logoLasPlumas, scale: 2.6 },
+    { name: 'Tanapo', src: logoTanapo, scale: 2.5 },
+    { name: 'Covencaucho', src: logoCovencauchos, scale: 4.1 },
+    { name: 'Siloamazo', src: logoSiloamazo, scale: 4 },
+    { name: 'BioGene', src: logoBiogene, scale: 3.1 },
+    { name: 'Mary', src: logoMary, scale: 2.96 },
+    { name: 'Empresas Polar', src: logoPolar, scale: 2.82 }, // Ejemplo: agrandar Polar un 20%
+    { name: 'Biomercados', src: logoBio, scale: 2.67 },
+    { name: 'Inversiones lacteas', src: logoinverlactea, scale: 2.1 },
+    { name: 'Frisulca', src: logofrisulca, scale: 1.5 },
+    { name: 'Palmeral', src: logopalmeral, scale: 1.5  },
+    { name: 'Agropecuaria San Simón', src: logoasasica, scale: 1.6 },
+    { name: 'Agro Simón', src: logoagrosimon, scale: 1.5 },
+    { name: 'Inversiones L55', src: logol55, scale: 1.61 },
+    { name: 'Hielo San Simón', src: logohielo, scale: 1.6 },
+    { name: 'Snitch', src: logosnitch, scale: 2 },
+    { name: 'Tubrica', src: logotubrica, scale: 1.0 }
   ];
 
-  
+
 
   const handleOpenCardModal = (card: typeof serviceCards[0]) => {
     setSelectedCard(card);
@@ -375,7 +412,7 @@ const enterpriseLogos: { name: string; src: any; scale?: number }[] = [
             </div>
 
             <nav className="hidden md:flex items-center space-x-6 lg:space-x-10 ">
-              
+
               <a href="#inicio" className="transition-colors text-sm uppercase tracking-wid transform hover:scale-105">Inicio</a>
               <a href="#nosotros" className="transition-colors text-sm uppercase tracking-wide text-black transform hover:scale-105">Nosotros</a>
               <a href="#servicios" className="transition-colors text-sm uppercase tracking-wide text-black transform hover:scale-105">Servicios</a>
@@ -459,7 +496,7 @@ const enterpriseLogos: { name: string; src: any; scale?: number }[] = [
                 <Database className="absolute -right-6 -bottom-6 w-48 h-48 sm:w-64 sm:h-64 text-primary/10 group-hover:scale-105 transition-transform duration-700 pointer-events-none" />
 
                 <div className="relative z-10 flex items-center justify-between border-b border-complementary/15 pb-4">
-                  
+
                   <span className="text-xs font-mono font-semibold text-secondary/50 uppercase tracking-widest">
                     Frontuari Tech Spec
                   </span>
@@ -476,7 +513,7 @@ const enterpriseLogos: { name: string; src: any; scale?: number }[] = [
 
                 <div className="relative z-10 pt-4 border-t border-complementary/15 flex items-center justify-between text-xs text-secondary/60">
                   <div className="flex items-center gap-2">
-                    
+
                   </div>
                   <span className="font-mono text-primary font-bold">v2026.1</span>
                 </div>
@@ -487,42 +524,76 @@ const enterpriseLogos: { name: string; src: any; scale?: number }[] = [
           </section>
         </div>
 
-        
-        {/* SERVICES SECTION */}
-        <section id="servicios" className="py-12 sm:py-16 lg:py-24 bg-complementary-light px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 sm:mb-16">
+
+        {/* SERVICES SECTION CON PUNTOS MÓVILES Y FADE PURAMENTE POR OPACIDAD */}
+        <section
+          id="servicios"
+          ref={serviciosSectionRef}
+          className="relative py-16 sm:py-20 lg:py-28 bg-slate-50 overflow-hidden px-4 sm:px-6 lg:px-8"
+        >
+          {/* PUNTOS MÁS GRANDES (2.5px) QUE MUEVEN Y WRAPPEAN CONTINUAMENTE */}
+          <div className="absolute inset-0  bg-[radial-gradient(#94a3b8_3.5px,transparent_2.5px)] [background-size:48px_48px] opacity-40 blur-[4px] pointer-events-none animate-moving-dots" />
+
+          {/* LUZ AMBIENTAL SUAVE */}
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/10 blur-[130px] rounded-full pointer-events-none" />
+
+          <div className="relative z-10 max-w-7xl mx-auto">
+            {/* CABECERA CON FADE IN / FADE OUT ESTÁTICO */}
+            <div
+              className={`flex flex-col md:flex-row justify-between items-start md:items-end mb-12 sm:mb-16 transition-opacity duration-700 ease-in-out ${
+                isServiciosVisible ? 'opacity-100' : 'opacity-0'
+              }`}
+            >
               <div className="max-w-2xl">
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">Soluciones Tecnológicas Integrales</h2>
+                <span className="text-primary font-bold text-xs uppercase tracking-widest bg-primary/10 px-3.5 py-1.5 rounded-full inline-block mb-3 border border-primary/15">
+                  Especializaciones
+                </span>
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-secondary tracking-tight mb-3">
+                  Soluciones Tecnológicas Integrales
+                </h2>
                 <p className="text-secondary/70 text-base sm:text-lg">
                   Infraestructura, desarrollo y análisis de datos enfocados en el rendimiento empresarial.
                 </p>
               </div>
             </div>
 
+            {/* GRID DE CONTENEDORES CON FADE ESCALONADO SIN DESPLAZAMIENTO */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-              {serviceCards.map((card) => {
+              {serviceCards.map((card, index) => {
                 const IconComponent = card.icon;
                 return (
                   <div
                     key={card.id}
                     onClick={() => handleOpenCardModal(card)}
-                    className="group cursor-pointer overflow-hidden rounded-xl shadow-md border border-complementary/20 bg-white flex flex-col transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl"
+                    style={{
+                      transitionDelay: isServiciosVisible ? `${index * 120}ms` : '0ms',
+                    }}
+                    className={`group cursor-pointer relative overflow-hidden rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-2xl hover:shadow-primary/10 flex flex-col justify-between transition-all duration-700 ease-out hover:-translate-y-2 hover:border-primary/40 ${
+                      isServiciosVisible ? 'opacity-100' : 'opacity-0'
+                    }`}
                   >
-                    <div className="relative h-48 w-full overflow-hidden bg-slate-50 flex items-center justify-center p-4">
+                    {/* CONTENEDOR DE LA IMAGEN */}
+                    <div className="relative h-48 w-full overflow-hidden bg-gradient-to-b from-slate-50 to-white flex items-center justify-center p-6 border-b border-slate-100">
+                      <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                       <img
                         src={card.image.src}
                         alt={card.title}
-                        className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105"
+                        className="max-h-full max-w-full object-contain transition-transform duration-500 ease-out group-hover:scale-108"
                       />
                     </div>
 
-                    <div className="p-4 bg-white flex items-center justify-between gap-3 border-t border-complementary/10 z-10">
+                    {/* BARRA DE ACENTO INFERIOR QUE SE EXPANDE EN HOVER */}
+                    <div className="h-[2px] w-0 bg-primary group-hover:w-full transition-all duration-500 ease-out" />
+
+                    {/* PIE CON TÍTULO E ICONO CON TILTEO */}
+                    <div className="p-5 bg-white flex items-center justify-between gap-3 z-10">
                       <h3 className="text-secondary font-bold text-base leading-snug group-hover:text-primary transition-colors duration-300">
                         {card.title}
                       </h3>
-                      <div className="p-2.5 rounded-lg bg-complementary-light text-secondary/70 group-hover:bg-primary group-hover:text-white group-hover:shadow-md transition-all duration-300 shrink-0">
-                        <IconComponent size={20} className="transition-transform duration-300 group-hover:scale-110" />
+
+                      {/* ICONO CON TILTEO Y ROTACIÓN */}
+                      <div className="p-2.5 rounded-xl bg-slate-100 text-secondary/70 group-hover:bg-primary group-hover:text-white group-hover:rotate-12 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/30 transition-all duration-300 shrink-0">
+                        <IconComponent size={20} className="transition-transform duration-300" />
                       </div>
                     </div>
                   </div>
@@ -742,11 +813,24 @@ const enterpriseLogos: { name: string; src: any; scale?: number }[] = [
               <h3 className="text-2xl font-bold text-secondary">
                 {selectedCard.title}
               </h3>
-              <p className="text-secondary/80 leading-relaxed text-sm sm:text-base">
+              <p className="text-secondary/80 leading-relaxed text-sm sm:text-base whitespace-pre-line">
                 {selectedCard.description}
               </p>
 
-              <div className="pt-6 border-t border-complementary/10 flex justify-end">
+              <div className="pt-6 border-t border-complementary/10 flex items-center justify-between">
+                {selectedCard.id === 2 ? (
+                  <a
+                    href="https://play.google.com/store/apps/collection/cluster?gsr=SnFqLEFTNFNDMi9GajFBSk96V2JiS1ppVVk4ckEvamFsb2RvbGZ0V0xWR212aGs9sgI9CiAKHG5ldC5mcm9udHVhcmkuc2FsZXNmb3JjZS5mdHUQBxIXCAESEzg2MDgxNDQzMDYzMDQyNzU2MTEYALASAA%3D%3D:S:ANO1ljKEez0&hl=es_VE"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-colors inline-flex items-center justify-center shadow-sm"
+                  >
+                    Ver
+                  </a>
+                ) : (
+                  <div />
+                )}
+
                 <button
                   onClick={() => setSelectedCard(null)}
                   className="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-colors"
@@ -844,7 +928,7 @@ const enterpriseLogos: { name: string; src: any; scale?: number }[] = [
                   Política de Privacidad
                 </button>
               </li>
-              
+
               <li><a href="mailto:frontuari@gmail.com" className="text-complementary hover:text-primary transition-colors text-sm mt-4 block">frontuari@gmail.com</a></li>
             </ul>
           </div>
