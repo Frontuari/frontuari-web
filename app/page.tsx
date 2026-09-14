@@ -11,47 +11,10 @@ import {
 type EnterpriseLogo = {
   name: string;
   src: any;
-  scale?: number; // Factor de escala individual (ej: 1.2, 0.85, 1.4)
+  scale?: number;
 };
 
-
 function EnterpriseLogosTicker({ logos }: { logos: EnterpriseLogo[] }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    let animId: number;
-
-    const updateScales = () => {
-      if (containerRef.current && trackRef.current) {
-        const containerRect = containerRef.current.getBoundingClientRect();
-        const containerCenter = containerRect.left + containerRect.width / 2;
-        const maxDistance = containerRect.width / 2;
-
-        const items = trackRef.current.querySelectorAll<HTMLDivElement>('.ticker-item');
-        items.forEach((item) => {
-          const itemRect = item.getBoundingClientRect();
-          const itemCenter = itemRect.left + itemRect.width / 2;
-          const distance = Math.abs(containerCenter - itemCenter);
-
-          // Distancia normalizada: 0 en el centro exacto, 1 en los bordes
-          const normDistance = Math.min(distance / maxDistance, 1);
-
-          // Escala y opacidad dinámica 
-          const scale = 1;
-          const opacity = 0.65 + (1 - normDistance) * 0.35;
-
-          item.style.transform = `scale(${scale.toFixed(3)})`;
-          item.style.opacity = opacity.toFixed(2);
-        });
-      }
-      animId = requestAnimationFrame(updateScales);
-    };
-
-    animId = requestAnimationFrame(updateScales);
-    return () => cancelAnimationFrame(animId);
-  }, []);
-
   return (
     <div className="relative w-full py-12 bg-white border-y border-slate-200/80 shadow-inner">
       {/* Texto de marquesina en el fondo */}
@@ -67,39 +30,35 @@ function EnterpriseLogosTicker({ logos }: { logos: EnterpriseLogo[] }) {
       </div>
 
       {/* Carcasa del carrusel */}
-      <div ref={containerRef} className="relative overflow-hidden w-full flex items-center py-4">
-        {/* Degradados laterales blancos */}
+      <div className="relative overflow-hidden w-full flex items-center py-4">
         <div className="absolute left-0 top-0 bottom-0 w-20 sm:w-40 bg-gradient-to-r from-white via-white/90 to-transparent z-20 pointer-events-none" />
         <div className="absolute right-0 top-0 bottom-0 w-20 sm:w-40 bg-gradient-to-l from-white via-white/90 to-transparent z-20 pointer-events-none" />
 
-        {/* Ticker continuo: SIN gap y SIN padding lateral para que el -50% sea simétrico */}
-        <div ref={trackRef} className="animate-ticker flex items-center">
+        <div className="animate-ticker flex items-center">
           {[...logos, ...logos].map((item, index) => (
             <div
               key={index}
-              /* Margen derecho asegura que todos los logos mantengan separación y se respete el w-auto (sin w-48) */
               className="ticker-item shrink-0 h-32 sm:h-40 flex items-center justify-center transition-transform duration-75 group cursor-pointer mr-16 sm:mr-24"
             >
               <img
                 src={item.src.src}
                 alt={item.name}
-                /* La altura se calcula con base a la escala. El w-auto del tailwind calcula el ancho perfecto */
                 style={{ height: `${(item.scale ?? 1) * 45}%` }}
-                className="w-auto max-w-[200px] sm:max-w-[260px] object-contain transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-1 group-hover:drop-shadow-md"
+                className="w-auto max-w-[200px] sm:max-w-[260px] object-contain transition-all duration-300 group-hover:scale-110 group-hover:-translate-y-1 group-hover:drop-shadow-md opacity-85 group-hover:opacity-100"
               />
             </div>
           ))}
         </div>
       </div>
-      
+
       {/* Texto de marquesina en el fondo */}
       <div className="absolute bottom-3 w-full overflow-hidden pointer-events-none select-none">
         <div className="animate-ticker flex whitespace-nowrap text-xs sm:text-sm font-mono font-black text-[#00356b]/35 tracking-[0.3em] uppercase">
           <span className="mr-8">
-            • SOLUCIONES INTEGRALES • COMPROMISO E INNOVACIÓN • SERVICIO DE CALIDAD • FRONTUARI ERP • EFICIENCIA Y ESCALABILIDAD • PROFESIONALIDAD Y EXCELECNIA
+            • SOLUCIONES INTEGRALES • COMPROMISO E INNOVACIÓN • SERVICIO DE CALIDAD • FRONTUARI ERP • EFICIENCIA Y ESCALABILIDAD • PROFESIONALIDAD Y EXCELENCIA
           </span>
           <span className="mr-8">
-            • SOLUCIONES INTEGRALES • COMPROMISO E INNOVACIÓN • SERVICIO DE CALIDAD • FRONTUARI ERP • EFICIENCIA Y ESCALABILIDAD • PROFESIONALIDAD Y EXCELECNIA
+            • SOLUCIONES INTEGRALES • COMPROMISO E INNOVACIÓN • SERVICIO DE CALIDAD • FRONTUARI ERP • EFICIENCIA Y ESCALABILIDAD • PROFESIONALIDAD Y EXCELENCIA
           </span>
         </div>
       </div>
@@ -113,7 +72,7 @@ import logoOpenSource from '../assets/images/icons/opensource.png';
 import logoCombinado from '../assets/images/icons/Logo-Frontuari-Datacomm.png';
 import bannerNosotros from '../assets/images/banners/banner-nosotros.jpg';
 import nombreFrontuari from '../assets/images/nombre-frontuari.jpg';
-import bannerTI from '../assets/images/banners/gestion-ti.webp'
+import bannerTI from '../assets/images/banners/gestion-ti.webp';
 import bannerBI from '../assets/images/banners/power-bi.webp';
 
 // APP MOVIL SCREENSHOTS
@@ -148,7 +107,8 @@ import logotubrica from '../assets/images/enterprises/tubrica.png';
 import logopalmeral from '../assets/images/enterprises/palmeral.png';
 import logoinverlactea from '../assets/images/enterprises/inverlactea.png';
 import logofrisulca from '../assets/images/enterprises/frisulca.png';
-// ESTILO GLOBAL INYECTADO PARA EL PARPADEO DEL CURSOR
+
+// ESTILOS OPTIMIZADOS PARA GPU Y CERO LAG
 const cursorStyle = `
   @keyframes customBlink {
     0%, 100% { opacity: 1; }
@@ -158,36 +118,114 @@ const cursorStyle = `
     animation: customBlink 0.8s step-start infinite;
   }
 
-  /* Animación del Ticker Infinito */
   @keyframes tickerScroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+    0% { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(-50%, 0, 0); }
   }
   .animate-ticker {
     display: flex;
     width: max-content;
+    will-change: transform;
     animation: tickerScroll 35s linear infinite;
   }
   .animate-ticker:hover {
     animation-play-state: paused;
   }
 
-  @keyframes moveBackgroundDots {
-  
-    0% {
-      background-position: 0 0;
-    }
-    100% {
-      background-position: 48px 48px;
-    }
-  }
-  .animate-moving-dots {
-    animation: moveBackgroundDots 5s linear infinite;
-  }
+  will-change: transform
 
+  .container {
+  user-select: none;
+  transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1);
+  will-change: transform;
+}
+
+.container:active {
+  transform: scale(0.95);
+}
 `;
 
-// 1. TYPEWRITER HEADING (Título Principal)
+function ServiceCard({
+  card,
+  isVisible,
+  onClick,
+}: {
+  card: {
+    id: number;
+    title: string;
+    icon: any;
+    image: any;
+    description: string;
+  };
+  isVisible: boolean;
+  onClick: () => void;
+}) {
+  const [isPressed, setIsPressed] = useState(false);
+  const IconComponent = card.icon;
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    // Retiene el control del puntero sin importar a dónde se mueva el mouse fuera de la ventana
+    e.currentTarget.setPointerCapture(e.pointerId);
+    setIsPressed(true);
+  };
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+    setIsPressed(false);
+    onClick();
+  };
+
+  const handlePointerCancel = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId);
+    }
+    setIsPressed(false);
+  };
+
+  return (
+    <div
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
+      // Cancela el arrastre nativo de HTML5 para evitar que el navegador congele el hover/active
+      onDragStart={(e) => e.preventDefault()}
+      className={`group cursor-pointer relative overflow-hidden rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-xl flex flex-col justify-between transform-gpu transition-all duration-200 ease-out select-none ${
+        isPressed
+          ? 'scale-[0.97] brightness-95 shadow-inner'
+          : 'hover:-translate-y-2 hover:border-primary/40'
+      } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+      style={{ willChange: 'transform', touchAction: 'manipulation' }}
+    >
+      {/* Contenedor de la Imagen */}
+      <div className="relative h-48 w-full overflow-hidden bg-gradient-to-b from-slate-50 to-white flex items-center justify-center p-6 border-b border-slate-100 pointer-events-none">
+        <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+        <img
+          src={card.image.src}
+          alt={card.title}
+          draggable={false}
+          className="max-h-full max-w-full object-contain transition-transform duration-300 ease-out group-hover:scale-105 pointer-events-none select-none"
+        />
+      </div>
+
+      {/* Barra decorativa */}
+      <div className="h-[2px] w-0 bg-primary group-hover:w-full transition-all duration-300 ease-out pointer-events-none" />
+
+      {/* Pie del Card */}
+      <div className="p-5 bg-white flex items-center justify-between gap-3 z-10 pointer-events-none">
+        <h3 className="text-secondary font-bold text-base leading-snug group-hover:text-primary transition-colors duration-200">
+          {card.title}
+        </h3>
+
+        <div className="p-2.5 rounded-xl bg-slate-100 text-secondary/70 group-hover:bg-primary group-hover:text-white group-hover:rotate-6 group-hover:scale-110 group-hover:shadow-md transition-all duration-200 shrink-0">
+          <IconComponent size={20} className="transition-transform duration-200" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function TypewriterHeading({ text, speed = 55 }: { text: string; speed?: number }) {
   const [displayedText, setDisplayedText] = useState('');
 
@@ -213,7 +251,6 @@ function TypewriterHeading({ text, speed = 55 }: { text: string; speed?: number 
   );
 }
 
-// 2. ROTATING TYPEWRITER (Escribe, borra y cambia palabras de forma fluida)
 function RotatingTypewriter({
   words,
   typeSpeed = 80,
@@ -276,8 +313,6 @@ export default function FrontuariLanding() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
 
-  const [isLogosVisible, setIsLogosVisible] = useState(false);
-  const logosSectionRef = useRef<HTMLDivElement>(null);
   const [isServiciosVisible, setIsServiciosVisible] = useState(false);
   const serviciosSectionRef = useRef<HTMLElement>(null);
 
@@ -286,7 +321,7 @@ export default function FrontuariLanding() {
       ([entry]) => {
         setIsServiciosVisible(entry.isIntersecting);
       },
-      { threshold: 0.25 } // Detecta la entrada y salida de la sección
+      { threshold: 0.15 }
     );
 
     if (serviciosSectionRef.current) {
@@ -305,24 +340,6 @@ export default function FrontuariLanding() {
     "Gestión Empresarial",
     "Soluciones Tecnológicas"
   ];
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsLogosVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.15 }
-    );
-
-    if (logosSectionRef.current) {
-      observer.observe(logosSectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
 
   const serviceCards = [
     {
@@ -353,7 +370,7 @@ export default function FrontuariLanding() {
     },
     {
       id: 4,
-      title: 'Power BI',
+      title: 'Manejo y visualización de datos con Power BI',
       icon: Database,
       image: bannerBI,
       description: `Convierte la sobrecarga de datos en decisiones claras y rentables a través de nuestras soluciones de Inteligencia de Negocios con Power BI. Conectamos todas tus fuentes de información, incluyendo ERP, sistemas contables y bases de datos, en tableros dinámicos en tiempo real que visibilizan tus indicadores clave de rendimiento de un vistazo. Empodera a tu equipo directivo con reportes interactivos que identifican oportunidades de ahorro, detectan ineficiencias y predicen tendencias de crecimiento sin depender de reportes manuales.`
@@ -362,20 +379,20 @@ export default function FrontuariLanding() {
 
   const enterpriseLogos: { name: string; src: any; scale?: number }[] = [
     { name: 'Coposa', src: logoCoposa, scale: 2.67 },
-    { name: 'ANCA', src: logoAnca, scale: 2.5 }, // Ejemplo: agrandar ANCA un 25%
+    { name: 'ANCA', src: logoAnca, scale: 2.5 },
     { name: 'Inversiones Porcinas', src: logoPorcina, scale: 2.5 },
     { name: 'Arichuna', src: logoArichuna, scale: 2.9 },
     { name: 'Las Plumas', src: logoLasPlumas, scale: 2.6 },
     { name: 'Tanapo', src: logoTanapo, scale: 2.5 },
-    { name: 'Covencaucho', src: logoCovencauchos, scale: 4.1 },
+    { name: 'Covencauchos', src: logoCovencauchos, scale: 4.1 },
     { name: 'Siloamazo', src: logoSiloamazo, scale: 4 },
     { name: 'BioGene', src: logoBiogene, scale: 3.1 },
     { name: 'Mary', src: logoMary, scale: 2.96 },
-    { name: 'Empresas Polar', src: logoPolar, scale: 2.82 }, // Ejemplo: agrandar Polar un 20%
+    { name: 'Empresas Polar', src: logoPolar, scale: 2.82 },
     { name: 'Biomercados', src: logoBio, scale: 2.67 },
     { name: 'Inversiones lacteas', src: logoinverlactea, scale: 2.1 },
     { name: 'Frisulca', src: logofrisulca, scale: 1.5 },
-    { name: 'Palmeral', src: logopalmeral, scale: 1.5  },
+    { name: 'Palmeral', src: logopalmeral, scale: 1.5 },
     { name: 'Agropecuaria San Simón', src: logoasasica, scale: 1.6 },
     { name: 'Agro Simón', src: logoagrosimon, scale: 1.5 },
     { name: 'Inversiones L55', src: logol55, scale: 1.61 },
@@ -384,24 +401,14 @@ export default function FrontuariLanding() {
     { name: 'Tubrica', src: logotubrica, scale: 1.0 }
   ];
 
-
-
-  const handleOpenCardModal = (card: typeof serviceCards[0]) => {
-    setSelectedCard(card);
-    setCurrentSlide(0);
-  };
-
   return (
     <div className="min-h-screen bg-white selection:bg-primary selection:text-white">
-      {/* Inyección de animación para el parpadeo del cursor */}
       <style>{cursorStyle}</style>
 
-      {/* HEADER CON CONTRASTE PARA EL LOGO */}
-      <header className="fixed top-0 w-full z-50 bg-slate-900/80 bg-white/100 backdrop-blur-md border-b border-white/10 transition-all">
+      {/* HEADER */}
+      <header className="fixed top-0 w-full z-50 bg-white/100 backdrop-blur-md border-b border-white/10 transition-all">
         <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 sm:h-20 md:h-24 gap-4">
-
-            {/* Contenedor blanco/translúcido para dar contraste y legibilidad al logo con texto negro */}
             <div className="bg-white/95 hover:bg-white backdrop-blur-sm px-3.5 py-1.5 rounded-xl border border-white/20 transition-all flex items-center shrink-0">
               <img
                 decoding="async"
@@ -412,24 +419,16 @@ export default function FrontuariLanding() {
             </div>
 
             <nav className="hidden md:flex items-center space-x-6 lg:space-x-10 ">
-
-              <a href="#inicio" className="transition-colors text-sm uppercase tracking-wid transform hover:scale-105">Inicio</a>
-              <a href="#nosotros" className="transition-colors text-sm uppercase tracking-wide text-black transform hover:scale-105">Nosotros</a>
+              <a href="#inicio" className="transition-colors text-sm uppercase tracking-wide transform hover:scale-105">Inicio</a>
               <a href="#servicios" className="transition-colors text-sm uppercase tracking-wide text-black transform hover:scale-105">Servicios</a>
+              <a href="#nosotros" className="transition-colors text-sm uppercase tracking-wide text-black transform hover:scale-105">Nosotros</a>
               <a href="#casos" className="transition-colors text-sm uppercase tracking-wide text-black transform hover:scale-105">Casos de Éxito</a>
-
-              <button
-                className="bg-primary hover:bg-primary-hover text-white px-5 py-2.5 lg:px-6 lg:py-3 rounded-md font-bold transition-all transform hover:-translate-y-0.5 shadow-md text-sm"
-                aria-label="Contactar a Frontuari"
-              >
-                Contáctanos
-              </button>
             </nav>
 
             <div className="md:hidden">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-white p-2 focus:outline-none"
+                className="text-black p-2 focus:outline-none"
                 aria-expanded={isMenuOpen}
                 aria-label="Abrir menú de navegación"
               >
@@ -442,13 +441,10 @@ export default function FrontuariLanding() {
         {isMenuOpen && (
           <div className="md:hidden bg-slate-900 border-b border-white/10 absolute top-full left-0 w-full shadow-lg text-black">
             <div className="px-6 pt-4 pb-6 space-y-4 flex flex-col">
-              <a href="#inicio" className="block text-slate-200 font-medium hover:text-black transition-colors">Inicio</a>
-              <a href="#nosotros" className="block text-slate-200 font-medium hover:text-black transition-colors">Nosotros</a>
-              <a href="#servicios" className="block text-slate-200 font-medium hover:text-black transition-colors">Servicios</a>
-              <a href="#casos" className="block text-slate-200 font-medium hover:text-black transition-colors">Casos de Éxito</a>
-              <button className="w-full bg-primary text-white px-6 py-3 rounded-md font-bold text-center">
-                Contáctanos
-              </button>
+              <a href="#inicio" onClick={() => setIsMenuOpen(false)} className="block text-slate-200 font-medium hover:text-white transition-colors">Inicio</a>
+              <a href="#servicios" onClick={() => setIsMenuOpen(false)} className="block text-slate-200 font-medium hover:text-white transition-colors">Servicios</a>
+              <a href="#nosotros" onClick={() => setIsMenuOpen(false)} className="block text-slate-200 font-medium hover:text-white transition-colors">Nosotros</a>
+              <a href="#casos" onClick={() => setIsMenuOpen(false)} className="block text-slate-200 font-medium hover:text-white transition-colors">Casos de Éxito</a>
             </div>
           </div>
         )}
@@ -456,7 +452,7 @@ export default function FrontuariLanding() {
 
       {/* MAIN */}
       <main>
-        {/* SECCIÓN INICIO CON VIDEO DE FONDO */}
+        {/* HERO SECTION */}
         <div className="relative overflow-hidden bg-slate-950">
           <video
             autoPlay
@@ -480,29 +476,16 @@ export default function FrontuariLanding() {
                 <p className="text-base sm:text-lg text-slate-200 max-w-lg leading-relaxed drop-shadow-sm">
                   Transformamos procesos operativos mediante soluciones de software corporativo a medida. Escalabilidad, seguridad y eficiencia estructural para negocios del mañana.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 pt-2 sm:pt-4">
-                  <button className="w-full sm:w-auto bg-primary hover:bg-primary-hover text-white px-8 py-4 rounded-md font-bold flex items-center justify-center transition-all transform hover:-translate-y-1 shadow-lg">
-                    Inicia tu transformación <ArrowRight className="ml-2 shrink-0" size={20} />
-                  </button>
-                  <button className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white border border-white/30 hover:border-white px-8 py-4 rounded-md font-bold transition-all text-center backdrop-blur-sm">
-                    Conoce más
-                  </button>
-                </div>
               </div>
 
               <div className="relative w-full h-[280px] sm:h-[360px] lg:h-[450px] bg-white/95 backdrop-blur-md rounded-2xl overflow-hidden flex flex-col justify-between p-6 sm:p-8 border border-white/40 shadow-2xl group">
-
                 <div className="absolute inset-0 bg-[radial-gradient(#24588d_1px,transparent_1px)] [background-size:16px_16px] opacity-[0.05] pointer-events-none" />
                 <Database className="absolute -right-6 -bottom-6 w-48 h-48 sm:w-64 sm:h-64 text-primary/10 group-hover:scale-105 transition-transform duration-700 pointer-events-none" />
+                <span className="text-xs font-mono font-semibold text-secondary/50 uppercase tracking-widest">
+                  Frontuari
+                </span>
 
-                <div className="relative z-10 flex items-center justify-between border-b border-complementary/15 pb-4">
-
-                  <span className="text-xs font-mono font-semibold text-secondary/50 uppercase tracking-widest">
-                    Frontuari Tech Spec
-                  </span>
-                </div>
-                {/* NO HAY NADA, NO EXISTE */}
-                <div className="">
+                <div>
                   <p className="text-secondary/60 text-xs sm:text-sm font-bold uppercase tracking-wider mb-2">
                     Especialistas en:
                   </p>
@@ -511,38 +494,26 @@ export default function FrontuariLanding() {
                   </div>
                 </div>
 
-                <div className="relative z-10 pt-4 border-t border-complementary/15 flex items-center justify-between text-xs text-secondary/60">
-                  <div className="flex items-center gap-2">
-
-                  </div>
-                  <span className="font-mono text-primary font-bold">v2026.1</span>
-                </div>
-
+                <div className="relative z-10 pt-4 border-t border-complementary/15 flex items-center justify-between text-xs text-secondary/60" />
               </div>
 
             </div>
           </section>
         </div>
 
-
-        {/* SERVICES SECTION CON PUNTOS MÓVILES Y FADE PURAMENTE POR OPACIDAD */}
+        {/* SERVICES SECTION */}
         <section
           id="servicios"
           ref={serviciosSectionRef}
           className="relative py-16 sm:py-20 lg:py-28 bg-slate-50 overflow-hidden px-4 sm:px-6 lg:px-8"
         >
-          {/* PUNTOS MÁS GRANDES (2.5px) QUE MUEVEN Y WRAPPEAN CONTINUAMENTE */}
-          <div className="absolute inset-0  bg-[radial-gradient(#94a3b8_3.5px,transparent_2.5px)] [background-size:48px_48px] opacity-40 blur-[4px] pointer-events-none animate-moving-dots" />
-
-          {/* LUZ AMBIENTAL SUAVE */}
-          <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/10 blur-[130px] rounded-full pointer-events-none" />
+          {/* Fondo de puntos estático y ligero sin animaciones que sobrecarguen el procesador */}
+          <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_2px,transparent_2px)] [background-size:32px_32px] opacity-25 pointer-events-none" />
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
 
           <div className="relative z-10 max-w-7xl mx-auto">
-            {/* CABECERA CON FADE IN / FADE OUT ESTÁTICO */}
             <div
-              className={`flex flex-col md:flex-row justify-between items-start md:items-end mb-12 sm:mb-16 transition-opacity duration-700 ease-in-out ${
-                isServiciosVisible ? 'opacity-100' : 'opacity-0'
-              }`}
+              className={`flex flex-col md:flex-row justify-between items-start md:items-end mb-12 sm:mb-16 transition-opacity duration-500 ease-in-out ${isServiciosVisible ? 'opacity-100' : 'opacity-0'}`}
             >
               <div className="max-w-2xl">
                 <span className="text-primary font-bold text-xs uppercase tracking-widest bg-primary/10 px-3.5 py-1.5 rounded-full inline-block mb-3 border border-primary/15">
@@ -557,56 +528,28 @@ export default function FrontuariLanding() {
               </div>
             </div>
 
-            {/* GRID DE CONTENEDORES CON FADE ESCALONADO SIN DESPLAZAMIENTO */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-              {serviceCards.map((card, index) => {
-                const IconComponent = card.icon;
-                return (
-                  <div
-                    key={card.id}
-                    onClick={() => handleOpenCardModal(card)}
-                    style={{
-                      transitionDelay: isServiciosVisible ? `${index * 120}ms` : '0ms',
-                    }}
-                    className={`group cursor-pointer relative overflow-hidden rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-2xl hover:shadow-primary/10 flex flex-col justify-between transition-all duration-700 ease-out hover:-translate-y-2 hover:border-primary/40 ${
-                      isServiciosVisible ? 'opacity-100' : 'opacity-0'
-                    }`}
-                  >
-                    {/* CONTENEDOR DE LA IMAGEN */}
-                    <div className="relative h-48 w-full overflow-hidden bg-gradient-to-b from-slate-50 to-white flex items-center justify-center p-6 border-b border-slate-100">
-                      <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                      <img
-                        src={card.image.src}
-                        alt={card.title}
-                        className="max-h-full max-w-full object-contain transition-transform duration-500 ease-out group-hover:scale-108"
-                      />
-                    </div>
-
-                    {/* BARRA DE ACENTO INFERIOR QUE SE EXPANDE EN HOVER */}
-                    <div className="h-[2px] w-0 bg-primary group-hover:w-full transition-all duration-500 ease-out" />
-
-                    {/* PIE CON TÍTULO E ICONO CON TILTEO */}
-                    <div className="p-5 bg-white flex items-center justify-between gap-3 z-10">
-                      <h3 className="text-secondary font-bold text-base leading-snug group-hover:text-primary transition-colors duration-300">
-                        {card.title}
-                      </h3>
-
-                      {/* ICONO CON TILTEO Y ROTACIÓN */}
-                      <div className="p-2.5 rounded-xl bg-slate-100 text-secondary/70 group-hover:bg-primary group-hover:text-white group-hover:rotate-12 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/30 transition-all duration-300 shrink-0">
-                        <IconComponent size={20} className="transition-transform duration-300" />
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
+            <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
+  {serviceCards.map((card) => (
+    <ServiceCard
+      key={card.id}
+      card={card}
+      isVisible={isServiciosVisible}
+      onClick={() => {
+        setSelectedCard(card);
+        setCurrentSlide(0);
+      }}
+    />
+  ))}
             </div>
           </div>
         </section>
 
-
         {/* NOSOTROS SECTION */}
-        <section id="nosotros" className="bg-white border-t border-complementary-light">
-          <div className="relative w-full py-16 sm:py-20 mb-12 sm:mb-16 overflow-hidden bg-secondary/5 border-y border-complementary/10">
+        <section id="nosotros" className="relative bg-slate-50 border-t border-complementary-light pb-16 sm:pb-20 lg:pb-24 overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_2px,transparent_2px)] [background-size:32px_32px] opacity-25 pointer-events-none" />
+          <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
+
+          <div className="relative z-10 w-full py-16 sm:py-20 mb-12 sm:mb-16 overflow-hidden bg-secondary/5 border-y border-complementary/10">
             <div className="absolute inset-0 z-0">
               <img
                 src={bannerNosotros.src}
@@ -624,13 +567,13 @@ export default function FrontuariLanding() {
             </div>
           </div>
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-16 bg-complementary-light/40 p-6 sm:p-8 lg:p-10 rounded-2xl border border-complementary/15 shadow-sm">
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-16 bg-white/70 backdrop-blur-md p-6 sm:p-8 lg:p-10 rounded-2xl border border-slate-200/80 shadow-lg shadow-slate-200/50">
               <div className="lg:col-span-5 relative w-full h-64 sm:h-80 lg:h-96 rounded-xl overflow-hidden shadow-md group">
                 <img
                   src={nombreFrontuari.src}
                   alt="Frontuari - Identidad y Fortaleza"
-                  className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-700 ease-out"
+                  className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-500 ease-out"
                 />
                 <div className="absolute inset-0 ring-1 ring-black/5 rounded-xl"></div>
               </div>
@@ -639,7 +582,7 @@ export default function FrontuariLanding() {
                 <span className="text-primary font-bold text-xs sm:text-sm uppercase tracking-wider bg-primary/10 px-3 py-1 rounded-full inline-block">
                   Sobre Nosotros:
                 </span>
-                <h3 className="text-secondary/70 text-base sm:text-base leading-relaxed">
+                <h3 className="text-secondary/80 text-base sm:text-base leading-relaxed">
                   Frontuari C,A Somos una empresa con más de 10 años de experiencia dedicada al desarrollo o implementación de herramientas tecnológicas ofreciendo servicios de calidad, trabajamos con tecnologías de punta, para brindar a nuestros clientes las mejores soluciones a todas sus necesidades.
                 </h3>
                 <p className="text-2xl sm:text-3xl font-extrabold text-secondary leading-tight">
@@ -651,7 +594,7 @@ export default function FrontuariLanding() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-16 bg-complementary-light/40 p-6 sm:p-8 lg:p-10 rounded-2xl border border-complementary/15 shadow-sm">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center mb-16 bg-white/70 backdrop-blur-md p-6 sm:p-8 lg:p-10 rounded-2xl border border-slate-200/80 shadow-lg shadow-slate-200/50">
               <div className="lg:col-span-5 relative w-full h-64 sm:h-80 rounded-xl overflow-hidden shadow-md group flex flex-col justify-center items-center bg-white p-4">
                 <img
                   src={logoOpenSource.src}
@@ -676,25 +619,31 @@ export default function FrontuariLanding() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 lg:gap-10">
-              <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-xl shadow-soft border border-complementary/10 hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
-                <ShieldCheck size={40} className="text-primary mb-6" />
-                <h3 className="text-xl font-bold mb-3">Compromiso</h3>
+              <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-2xl shadow-xl shadow-slate-300/70 border border-slate-200 hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300 hover:-translate-y-2 group">
+                <div className="p-3.5 bg-slate-50 rounded-xl inline-block mb-5 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                  <ShieldCheck size={36} className="text-primary group-hover:text-white transition-colors" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-secondary">Compromiso</h3>
                 <p className="text-secondary/70 leading-relaxed">
                   Garantizamos entregas precisas y acompañamiento continuo. Tu éxito operativo es la métrica de nuestra efectividad.
                 </p>
               </div>
 
-              <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-xl shadow-soft border border-complementary/10 hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
-                <Lightbulb size={40} className="text-primary mb-6" />
-                <h3 className="text-xl font-bold mb-3">Innovación</h3>
+              <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-2xl shadow-xl shadow-slate-300/70 border border-slate-200 hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300 hover:-translate-y-2 group">
+                <div className="p-3.5 bg-slate-50 rounded-xl inline-block mb-5 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                  <Lightbulb size={36} className="text-primary group-hover:text-white transition-colors" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-secondary">Innovación</h3>
                 <p className="text-secondary/70 leading-relaxed">
                   Adoptamos y adaptamos tecnologías de vanguardia para crear arquitecturas digitales que rompen paradigmas.
                 </p>
               </div>
 
-              <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-xl shadow-soft border border-complementary/10 hover:shadow-lg transition-all duration-300 hover:-translate-y-2">
-                <Users size={40} className="text-primary mb-6" />
-                <h3 className="text-xl font-bold mb-3">Conexión</h3>
+              <div className="bg-white p-6 sm:p-8 lg:p-10 rounded-2xl shadow-xl shadow-slate-300/70 border border-slate-200 hover:shadow-2xl hover:shadow-primary/30 transition-all duration-300 hover:-translate-y-2 group">
+                <div className="p-3.5 bg-slate-50 rounded-xl inline-block mb-5 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                  <Users size={36} className="text-primary group-hover:text-white transition-colors" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-secondary">Conexión</h3>
                 <p className="text-secondary/70 leading-relaxed">
                   No somos solo proveedores; nos integramos como un brazo tecnológico alineado a la cultura de tu empresa.
                 </p>
@@ -703,26 +652,26 @@ export default function FrontuariLanding() {
           </div>
         </section>
 
-
         {/* CASOS DE ÉXITO */}
         <section
           id="casos"
-          className="py-16 sm:py-20 lg:py-24 border-t border-complementary-light overflow-hidden"
+          className="mt-16 lg:mt-24 pt-10 sm:pt-14 lg:pt-18 pb-16 sm:pb-20 lg:pb-24 border-t border-complementary-light overflow-hidden w-full"
           style={{ backgroundColor: '#011325' }}
         >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 sm:mb-12 text-center">
-            <span className="text-white font-bold text-xs sm:text-sm uppercase tracking-wider bg-white/15 px-3.5 py-1.5 rounded-full inline-block mb-3 border border-white/20">
+          <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 sm:mb-16 flex flex-col items-center justify-center text-center">
+            <span className="text-white font-bold text-xs sm:text-sm uppercase tracking-wider bg-white/15 px-3.5 py-1.5 rounded-full inline-block mb-6 border border-white/20">
               Casos de Éxito
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-4">
+
+            <h2 className="mx-auto text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-5 text-balance">
               Empresas que han confiado en nosotros
             </h2>
-            <p className="text-white/80 text-base sm:text-lg leading-relaxed max-w-3xl mx-auto">
+
+            <p className="mx-auto text-white/80 text-base sm:text-lg leading-relaxed max-w-3xl text-center">
               Nuestra trayectoria respaldada por líderes del sector tecnológico e industrial.
             </p>
           </div>
 
-          {/* Ticker dinámico con fondo blanco y escalado al centro */}
           <EnterpriseLogosTicker logos={enterpriseLogos} />
         </section>
       </main>
@@ -783,8 +732,7 @@ export default function FrontuariLanding() {
                               e.stopPropagation();
                               setCurrentSlide(idx);
                             }}
-                            className={`h-2 rounded-full transition-all ${currentSlide === idx ? 'bg-white w-5' : 'bg-white/50 w-2'
-                              }`}
+                            className={`h-2 rounded-full transition-all ${currentSlide === idx ? 'bg-white w-5' : 'bg-white/50 w-2'}`}
                             aria-label={`Ir a imagen ${idx + 1}`}
                           />
                         ))}
@@ -874,7 +822,7 @@ export default function FrontuariLanding() {
                 Los datos recopilados se utilizan exclusivamente con fines operativos y técnicos para optimizar las soluciones contratadas. La empresa garantiza que no venderá, alquilará ni compartirá información personal o sensible con terceros no autorizados con fines comerciales.
               </p>
               <p>
-                Cualquier transferencia de datos se limitará estrictamente a requerimientos legales o necesidades operativas bajo condiciones de confidencialidad. Los usuarios tienen derecho a acceder, corregir o eliminar su información personal mediante solicitud directa.
+                Cualquier transferencia de datos se limitará strictly a requerimientos legales o necesidades operativas bajo condiciones de confidencialidad. Los usuarios tienen derecho a acceder, corregir o eliminar su información personal mediante solicitud directa.
               </p>
             </div>
 
@@ -902,8 +850,14 @@ export default function FrontuariLanding() {
               Ingeniería de software y soluciones corporativas para transformar la infraestructura digital de tu empresa.
             </p>
             <address className="not-italic text-sm text-complementary">
-              <p>Araure, Portuguesa</p>
-              <p>Venezuela</p>
+              <a
+                href="https://maps.app.goo.gl/XriLoMwEgwkp6CzY8"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-complementary hover:text-primary transition-colors text-sm block"
+              >
+                Av. principal C.C. Buenaventura Centro Empresarial Nivel Agrícola Oficina N° M-11, Araure 3303, Portuguesa, Venezuela.
+              </a>
             </address>
           </div>
 
@@ -911,8 +865,8 @@ export default function FrontuariLanding() {
             <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Enlaces Rápidos</h4>
             <ul className="space-y-3">
               <li><a href="#inicio" className="text-complementary hover:text-white transition-colors text-sm">Inicio</a></li>
-              <li><a href="#nosotros" className="text-complementary hover:text-white transition-colors text-sm">Nuestra Esencia</a></li>
               <li><a href="#servicios" className="text-complementary hover:text-white transition-colors text-sm">Servicios IT</a></li>
+              <li><a href="#nosotros" className="text-complementary hover:text-white transition-colors text-sm">Nuestra Esencia</a></li>
               <li><a href="#casos" className="text-complementary hover:text-white transition-colors text-sm">Casos de Éxito</a></li>
             </ul>
           </div>
@@ -929,7 +883,33 @@ export default function FrontuariLanding() {
                 </button>
               </li>
 
-              <li><a href="mailto:frontuari@gmail.com" className="text-complementary hover:text-primary transition-colors text-sm mt-4 block">frontuari@gmail.com</a></li>
+              <li>
+                <a href="mailto:frontuari@gmail.com" className="text-complementary hover:text-primary transition-colors text-sm block">
+                  frontuari@gmail.com
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="https://wa.me/584149739547"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-complementary hover:text-primary transition-colors text-sm block"
+                >
+                  Escribanos al +58 414 9739547
+                </a>
+              </li>
+
+              <li>
+                <a
+                  href="https://www.instagram.com/frontuari?stkn=MTU5Z3d4ODk3c3ZqcA%3D%3D"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-complementary hover:text-primary transition-colors text-sm block"
+                >
+                  Instagram: @frontuari
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -944,7 +924,6 @@ export default function FrontuariLanding() {
           </p>
         </div>
       </footer>
-
     </div>
   );
 }
