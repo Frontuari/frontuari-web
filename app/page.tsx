@@ -2,10 +2,8 @@
 
 import { useState, useEffect, useRef } from 'react';
 import {
-  Menu, X, Server, Smartphone,
-  LineChart, Database, ShieldCheck,
-  Lightbulb, Users, ArrowRight,
-  ChevronLeft, ChevronRight
+  Server, Smartphone, LineChart, Database, ShieldCheck,
+  Lightbulb, Users, ArrowRight, ChevronLeft, ChevronRight, X
 } from 'lucide-react';
 
 type EnterpriseLogo = {
@@ -67,7 +65,6 @@ function EnterpriseLogosTicker({ logos }: { logos: EnterpriseLogo[] }) {
 }
 
 // IMAGENES 
-import logoFrontuari from '../assets/images/icons/Logo-Frontuari.png';
 import logoOpenSource from '../assets/images/icons/opensource.png';
 import logoCombinado from '../assets/images/icons/Logo-Frontuari-Datacomm.png';
 import bannerNosotros from '../assets/images/banners/banner-nosotros.jpg';
@@ -108,7 +105,10 @@ import logopalmeral from '../assets/images/enterprises/palmeral.png';
 import logoinverlactea from '../assets/images/enterprises/inverlactea.png';
 import logofrisulca from '../assets/images/enterprises/frisulca.png';
 
-// ESTILOS OPTIMIZADOS PARA GPU Y CERO LAG
+import Navbar from './components/navbar';
+import Footer from './components/footer';
+import '../app/globals.css';
+
 const cursorStyle = `
   @keyframes customBlink {
     0%, 100% { opacity: 1; }
@@ -132,17 +132,15 @@ const cursorStyle = `
     animation-play-state: paused;
   }
 
-  will-change: transform
-
   .container {
-  user-select: none;
-  transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1);
-  will-change: transform;
-}
+    user-select: none;
+    transition: transform 0.15s cubic-bezier(0.2, 0, 0, 1);
+    will-change: transform;
+  }
 
-.container:active {
-  transform: scale(0.95);
-}
+  .container:active {
+    transform: scale(0.95);
+  }
 `;
 
 function ServiceCard({
@@ -150,55 +148,19 @@ function ServiceCard({
   isVisible,
   onClick,
 }: {
-  card: {
-    id: number;
-    title: string;
-    icon: any;
-    image: any;
-    description: string;
-  };
+  card: { id: number; title: string; icon: any; image: any; description: string };
   isVisible: boolean;
   onClick: () => void;
 }) {
-  const [isPressed, setIsPressed] = useState(false);
   const IconComponent = card.icon;
-
-  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    // Retiene el control del puntero sin importar a dónde se mueva el mouse fuera de la ventana
-    e.currentTarget.setPointerCapture(e.pointerId);
-    setIsPressed(true);
-  };
-
-  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-      e.currentTarget.releasePointerCapture(e.pointerId);
-    }
-    setIsPressed(false);
-    onClick();
-  };
-
-  const handlePointerCancel = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-      e.currentTarget.releasePointerCapture(e.pointerId);
-    }
-    setIsPressed(false);
-  };
 
   return (
     <div
-      onPointerDown={handlePointerDown}
-      onPointerUp={handlePointerUp}
-      onPointerCancel={handlePointerCancel}
-      // Cancela el arrastre nativo de HTML5 para evitar que el navegador congele el hover/active
-      onDragStart={(e) => e.preventDefault()}
-      className={`group cursor-pointer relative overflow-hidden rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-xl flex flex-col justify-between transform-gpu transition-all duration-200 ease-out select-none ${
-        isPressed
-          ? 'scale-[0.97] brightness-95 shadow-inner'
-          : 'hover:-translate-y-2 hover:border-primary/40'
-      } ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-      style={{ willChange: 'transform', touchAction: 'manipulation' }}
+      onClick={onClick}
+      className={`group cursor-pointer relative overflow-hidden rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-xl flex flex-col justify-between transition-all duration-200 ease-out select-none transform-gpu active:scale-[0.97] active:brightness-95 ${
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
+      }`}
     >
-      {/* Contenedor de la Imagen */}
       <div className="relative h-48 w-full overflow-hidden bg-gradient-to-b from-slate-50 to-white flex items-center justify-center p-6 border-b border-slate-100 pointer-events-none">
         <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
         <img
@@ -209,10 +171,8 @@ function ServiceCard({
         />
       </div>
 
-      {/* Barra decorativa */}
       <div className="h-[2px] w-0 bg-primary group-hover:w-full transition-all duration-300 ease-out pointer-events-none" />
 
-      {/* Pie del Card */}
       <div className="p-5 bg-white flex items-center justify-between gap-3 z-10 pointer-events-none">
         <h3 className="text-secondary font-bold text-base leading-snug group-hover:text-primary transition-colors duration-200">
           {card.title}
@@ -308,10 +268,8 @@ function RotatingTypewriter({
 }
 
 export default function FrontuariLanding() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState<null | { id: number; title: string; image: any; gallery?: any[]; description: string; icon?: any }>(null);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
 
   const [isServiciosVisible, setIsServiciosVisible] = useState(false);
   const serviciosSectionRef = useRef<HTMLElement>(null);
@@ -321,7 +279,7 @@ export default function FrontuariLanding() {
       ([entry]) => {
         setIsServiciosVisible(entry.isIntersecting);
       },
-      { threshold: 0.15 }
+      { threshold: 0.65 }
     );
 
     if (serviciosSectionRef.current) {
@@ -405,50 +363,8 @@ export default function FrontuariLanding() {
     <div className="min-h-screen bg-white selection:bg-primary selection:text-white">
       <style>{cursorStyle}</style>
 
-      {/* HEADER */}
-      <header className="fixed top-0 w-full z-50 bg-white/100 backdrop-blur-md border-b border-white/10 transition-all">
-        <div className="max-w-7xl mx-auto px-6 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20 md:h-24 gap-4">
-            <div className="bg-white/95 hover:bg-white backdrop-blur-sm px-3.5 py-1.5 rounded-xl border border-white/20 transition-all flex items-center shrink-0">
-              <img
-                decoding="async"
-                className="h-6 sm:h-8 md:h-9 w-auto shrink-0 object-contain my-auto"
-                src={logoFrontuari.src}
-                alt="Frontuari"
-              />
-            </div>
-
-            <nav className="hidden md:flex items-center space-x-6 lg:space-x-10 ">
-              <a href="#inicio" className="transition-colors text-sm uppercase tracking-wide transform hover:scale-105">Inicio</a>
-              <a href="#servicios" className="transition-colors text-sm uppercase tracking-wide text-black transform hover:scale-105">Servicios</a>
-              <a href="#nosotros" className="transition-colors text-sm uppercase tracking-wide text-black transform hover:scale-105">Nosotros</a>
-              <a href="#casos" className="transition-colors text-sm uppercase tracking-wide text-black transform hover:scale-105">Casos de Éxito</a>
-            </nav>
-
-            <div className="md:hidden">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="text-black p-2 focus:outline-none"
-                aria-expanded={isMenuOpen}
-                aria-label="Abrir menú de navegación"
-              >
-                {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {isMenuOpen && (
-          <div className="md:hidden bg-slate-900 border-b border-white/10 absolute top-full left-0 w-full shadow-lg text-black">
-            <div className="px-6 pt-4 pb-6 space-y-4 flex flex-col">
-              <a href="#inicio" onClick={() => setIsMenuOpen(false)} className="block text-slate-200 font-medium hover:text-white transition-colors">Inicio</a>
-              <a href="#servicios" onClick={() => setIsMenuOpen(false)} className="block text-slate-200 font-medium hover:text-white transition-colors">Servicios</a>
-              <a href="#nosotros" onClick={() => setIsMenuOpen(false)} className="block text-slate-200 font-medium hover:text-white transition-colors">Nosotros</a>
-              <a href="#casos" onClick={() => setIsMenuOpen(false)} className="block text-slate-200 font-medium hover:text-white transition-colors">Casos de Éxito</a>
-            </div>
-          </div>
-        )}
-      </header>
+      {/* NAVBAR */}
+      <Navbar />
 
       {/* MAIN */}
       <main>
@@ -501,13 +417,12 @@ export default function FrontuariLanding() {
           </section>
         </div>
 
-        {/* SERVICES SECTION */}
+        {/* SERVICIOS SECTION */}
         <section
           id="servicios"
           ref={serviciosSectionRef}
           className="relative py-16 sm:py-20 lg:py-28 bg-slate-50 overflow-hidden px-4 sm:px-6 lg:px-8"
         >
-          {/* Fondo de puntos estático y ligero sin animaciones que sobrecarguen el procesador */}
           <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_2px,transparent_2px)] [background-size:32px_32px] opacity-25 pointer-events-none" />
           <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
 
@@ -528,18 +443,30 @@ export default function FrontuariLanding() {
               </div>
             </div>
 
+            {/* Rejilla de Cards */}
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-  {serviceCards.map((card) => (
-    <ServiceCard
-      key={card.id}
-      card={card}
-      isVisible={isServiciosVisible}
-      onClick={() => {
-        setSelectedCard(card);
-        setCurrentSlide(0);
-      }}
-    />
-  ))}
+              {serviceCards.map((card) => (
+                <ServiceCard
+                  key={card.id}
+                  card={card}
+                  isVisible={isServiciosVisible}
+                  onClick={() => {
+                    setSelectedCard(card);
+                    setCurrentSlide(0);
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* BOTÓN "VER MÁS" */}
+            <div className="mt-12 sm:mt-16 flex justify-center">
+              <a
+                href="/productos"
+                className="group relative inline-flex items-center justify-center gap-3 bg-primary hover:bg-primary-hover text-white font-bold text-sm sm:text-base px-8 py-3.5 rounded-xl shadow-md hover:shadow-xl hover:shadow-primary/25 transition-all duration-200 transform hover:-translate-y-0.5 active:scale-95 select-none"
+              >
+                <span>Ver más productos y soluciones</span>
+                <ArrowRight size={18} className="transition-transform duration-200 group-hover:translate-x-1" />
+              </a>
             </div>
           </div>
         </section>
@@ -791,139 +718,8 @@ export default function FrontuariLanding() {
         </div>
       )}
 
-      {/* MODAL POLÍTICA DE PRIVACIDAD */}
-      {isPrivacyOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto"
-          onClick={() => setIsPrivacyOpen(false)}
-        >
-          <div
-            className="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl my-8 transform transition-all flex flex-col max-h-[85vh]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="px-6 py-5 border-b border-complementary/15 flex items-center justify-between bg-complementary-light/30">
-              <h3 className="text-xl sm:text-2xl font-bold text-secondary">
-                Política de Privacidad
-              </h3>
-              <button
-                onClick={() => setIsPrivacyOpen(false)}
-                className="text-secondary/60 hover:text-secondary rounded-full p-1.5 transition-colors"
-                aria-label="Cerrar modal de privacidad"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="p-6 sm:p-8 space-y-4 overflow-y-auto text-secondary/80 text-sm sm:text-base leading-relaxed">
-              <p>
-                Frontuari, C.A., operando bajo la marca OpenSource Consulting Group, se compromete a proteger la privacidad y confidencialidad de la información proporcionada por sus clientes en servicios de software corporativo, infraestructura, desarrollo móvil, análisis de datos y bases de datos.
-              </p>
-              <p>
-                Los datos recopilados se utilizan exclusivamente con fines operativos y técnicos para optimizar las soluciones contratadas. La empresa garantiza que no venderá, alquilará ni compartirá información personal o sensible con terceros no autorizados con fines comerciales.
-              </p>
-              <p>
-                Cualquier transferencia de datos se limitará strictly a requerimientos legales o necesidades operativas bajo condiciones de confidencialidad. Los usuarios tienen derecho a acceder, corregir o eliminar su información personal mediante solicitud directa.
-              </p>
-            </div>
-
-            <div className="px-6 py-4 border-t border-complementary/10 bg-gray-50 flex justify-end">
-              <button
-                onClick={() => setIsPrivacyOpen(false)}
-                className="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-colors shadow-sm"
-              >
-                Entendido
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* FOOTER */}
-      <footer className="bg-secondary text-complementary-light pt-12 sm:pt-16 lg:pt-20 pb-8 sm:pb-10 px-4 sm:px-6 lg:px-8 border-t-[6px] border-primary">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 mb-10 sm:mb-16">
-
-          <div>
-            <span className="font-heading font-bold text-3xl tracking-tight text-white block mb-6">
-              Frontuari
-            </span>
-            <p className="text-complementary text-sm leading-relaxed max-w-xs mb-6">
-              Ingeniería de software y soluciones corporativas para transformar la infraestructura digital de tu empresa.
-            </p>
-            <address className="not-italic text-sm text-complementary">
-              <a
-                href="https://maps.app.goo.gl/XriLoMwEgwkp6CzY8"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-complementary hover:text-primary transition-colors text-sm block"
-              >
-                Av. principal C.C. Buenaventura Centro Empresarial Nivel Agrícola Oficina N° M-11, Araure 3303, Portuguesa, Venezuela.
-              </a>
-            </address>
-          </div>
-
-          <div>
-            <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Enlaces Rápidos</h4>
-            <ul className="space-y-3">
-              <li><a href="#inicio" className="text-complementary hover:text-white transition-colors text-sm">Inicio</a></li>
-              <li><a href="#servicios" className="text-complementary hover:text-white transition-colors text-sm">Servicios IT</a></li>
-              <li><a href="#nosotros" className="text-complementary hover:text-white transition-colors text-sm">Nuestra Esencia</a></li>
-              <li><a href="#casos" className="text-complementary hover:text-white transition-colors text-sm">Casos de Éxito</a></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Legal & Contacto</h4>
-            <ul className="space-y-3">
-              <li>
-                <button
-                  onClick={() => setIsPrivacyOpen(true)}
-                  className="text-complementary hover:text-white transition-colors text-sm text-left focus:outline-none"
-                >
-                  Política de Privacidad
-                </button>
-              </li>
-
-              <li>
-                <a href="mailto:frontuari@gmail.com" className="text-complementary hover:text-primary transition-colors text-sm block">
-                  frontuari@gmail.com
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href="https://wa.me/584149739547"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-complementary hover:text-primary transition-colors text-sm block"
-                >
-                  Escribanos al +58 414 9739547
-                </a>
-              </li>
-
-              <li>
-                <a
-                  href="https://www.instagram.com/frontuari?stkn=MTU5Z3d4ODk3c3ZqcA%3D%3D"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-complementary hover:text-primary transition-colors text-sm block"
-                >
-                  Instagram: @frontuari
-                </a>
-              </li>
-            </ul>
-          </div>
-
-        </div>
-
-        <div className="max-w-7xl mx-auto border-t border-complementary/20 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0">
-          <p className="text-xs text-complementary text-center md:text-left">
-            &copy; {new Date().getFullYear()} Frontuari, C.A. Todos los derechos reservados.
-          </p>
-          <p className="text-xs text-complementary text-center md:text-right">
-            No ofrecemos software, ofrecemos soluciones.
-          </p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
