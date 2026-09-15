@@ -4,6 +4,13 @@ import React, { useState, MouseEvent, useRef } from 'react';
 import { ArrowLeft, ChevronRight, CheckCircle2, Database, Blocks, CloudCog, BarChart3 } from 'lucide-react';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
+import Image from 'next/image';
+
+
+import imgIdempiere from '../../assets/images/icons/idempiereLogo.png';
+import imgPlugins from '../assets/images/banner-plugins.png';
+import imgSalesforce from '../../assets/images/banners/appmovil/iconss2.png';
+import imgPowerBI from '../../assets/images/banners/power-bi.webp';
 
 /* =========================================
    COMPONENTE: 3D Parallax Tilt + Lumen Glow
@@ -21,7 +28,7 @@ export const TiltWrapper = ({ children, enableGlow = false }: TiltWrapperProps) 
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width / 2;
     const y = e.clientY - rect.top - rect.height / 2;
-    
+
     // Mutación directa de la propiedad style: 0 re-renderizados de React
     cardRef.current.style.transform = `perspective(1000px) rotateX(${(y / (rect.height / 2)) * -10}deg) rotateY(${(x / (rect.width / 2)) * 10}deg) scale3d(1.02, 1.02, 1.02)`;
   };
@@ -32,13 +39,13 @@ export const TiltWrapper = ({ children, enableGlow = false }: TiltWrapperProps) 
   };
 
   return (
-    <div 
-      onMouseMove={handleMouseMove} 
+    <div
+      onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className="w-full h-full cursor-pointer"
     >
-      <div 
-        ref={cardRef} 
+      <div
+        ref={cardRef}
         className="w-full h-full transition-transform duration-100 ease-out transform-gpu"
       >
         {children}
@@ -55,25 +62,25 @@ const modules = [
     id: 1,
     title: 'Soporte y Consultoría iDempiere',
     description: 'Gestión integral y optimización de arquitectura ERP para empresas en crecimiento.',
+    image: imgIdempiere,
     bullets: [
       'Implementación de módulos financieros y logísticos.',
       'Optimización de bases de datos y arquitectura ERP.',
-      'Soporte técnico continuo y resolución de incidencias.'
+      'ERP Idempiere ERP Idempiere ERP Idempiere ERP Idempiere ERP Idempiere ERP Idempiere ERP Idempiere ERP Idempiere ERP Idempiere.'
     ],
-    icon: <Database size={48} className="text-white drop-shadow-md" />,
     gradient: 'from-blue-600 to-[#24588D]',
-    hasGlow: true // Control por elemento
+    hasGlow: true 
   },
   {
     id: 2,
     title: 'Desarrollo de Plugins a Medida',
     description: 'Extensión de funcionalidades nativas ajustadas a la lógica de tu negocio.',
     bullets: [
-      'Plguin 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ultricies sagittis ligula, eget dictum ligula congue et. Nam id bibendum nisl, vel vulputate odio. Aliquam vitae sem ante. Etiam et ultricies est, eu accumsan risus. Duis a dolor sit amet massa bibendum consectetur. Mauris nec arcu eget odio fringilla fermentum. Proin semper nunc non ornare lobortis. Proin cursus blandit sollicitudin..',
+      'Plugin 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ultricies sagittis ligula, eget dictum ligula congue et. Nam id bibendum nisl, vel vulputate odio. Aliquam vitae sem ante. Etiam et ultricies est, eu accumsan risus. Duis a dolor sit amet massa bibendum consectetur. Mauris nec arcu eget odio fringilla fermentum. Proin semper nunc non ornare lobortis. Proin cursus blandit sollicitudin..',
       'Plugin 2: Soporte para texto largo y corto, hola',
       'Plugin 3: Seis siete.'
     ],
-    icon: <Blocks size={48} className="text-white drop-shadow-md" />,
+    image: imgIdempiere,
     gradient: 'from-[#24588D] to-indigo-700',
     hasGlow: true
   },
@@ -86,7 +93,7 @@ const modules = [
       'Registro de clientes, ventas y precios de productos en un solo lugar.',
       'Mapeado de rutas de visita con mapa interactivo.'
     ],
-    icon: <CloudCog size={48} className="text-white drop-shadow-md" />,
+    image: imgSalesforce,
     gradient: 'from-sky-500 to-[#24588D]',
     hasGlow: false // Ejemplo desactivado
   },
@@ -99,7 +106,7 @@ const modules = [
       'Visualizaciones dinámicas en tiempo real.',
       'Modelado de KPIs estratégicos para toma de decisiones.'
     ],
-    icon: <BarChart3 size={48} className="text-white drop-shadow-md" />,
+    image: imgPowerBI,
     gradient: 'from-blue-400 to-[#24588D]',
     hasGlow: true
   }
@@ -146,8 +153,8 @@ export default function ProductosTemplatePage() {
           <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
             <div className="flex flex-col gap-12 lg:gap-16">
               {modules.map((module, index) => (
-                <div 
-                  key={module.id} 
+                <div
+                  key={module.id}
                   className={`
                     group bg-white rounded-3xl p-6 sm:p-10 flex flex-col lg:flex-row gap-8 lg:gap-12 items-center
                     border border-slate-200 shadow-sm
@@ -156,15 +163,28 @@ export default function ProductosTemplatePage() {
                     ${index % 2 !== 0 ? 'lg:flex-row-reverse' : ''}
                   `}
                 >
-                  
+
                   {/* CONTENEDOR TILT + LUMEN GLOW */}
                   <div className="w-full lg:w-5/12 h-64 sm:h-80 flex-shrink-0">
                     <TiltWrapper enableGlow={module.hasGlow}>
-                      <div className={`w-full h-full rounded-2xl bg-gradient-to-br ${module.gradient} p-1 relative overflow-hidden flex items-center justify-center shadow-inner`}>
-                        <div className="absolute inset-0 bg-black/10 mix-blend-overlay pointer-events-none" />
-                        <div className="relative z-10 transform-gpu translate-z-[50px]">
-                          {module.icon}
-                        </div>
+                      <div className={`w-full h-full rounded-2xl bg-gradient-to-br ${module.gradient} relative overflow-hidden flex items-center justify-center shadow-inner group`}>
+                        <div className="absolute inset-0 bg-black/10 mix-blend-overlay pointer-events-none z-10" />
+
+                        {/* RENDERIZADO DE LA IMAGEN */}
+                        {module.image ? (
+                          <Image
+                            src={module.image}
+                            alt={module.title}
+                            fill
+                            unoptimized
+                            draggable={false}
+                            className="object-cover transition-transform duration-300 group-hover:scale-105 pointer-events-none select-none"
+                          />
+                        ) : (
+                          <div className="relative z-10 transform-gpu translate-z-[50px]">
+                            {module.icon}
+                          </div>
+                        )}
                       </div>
                     </TiltWrapper>
                   </div>
@@ -174,7 +194,7 @@ export default function ProductosTemplatePage() {
                     <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 group-hover:text-[#24588D] transition-colors duration-300">
                       {module.title}
                     </h2>
-                    
+
                     <p className="text-slate-600 leading-relaxed text-lg">
                       {module.description}
                     </p>
