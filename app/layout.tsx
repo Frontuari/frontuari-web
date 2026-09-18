@@ -5,6 +5,9 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
     title: 'Frontuari, C.A. | Innovación y Compromiso Tecnológico',
     description: 'Transformamos procesos operativos mediante soluciones de software corporativo a medida. Escalabilidad y eficiencia estructural.',
+    icons: {
+      icon: '/icon.png',
+    },
 };
 
 import FloatingWhatsApp from './components/FloatingWhatsApp';

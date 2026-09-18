@@ -507,7 +507,7 @@ export default function FrontuariLanding() {
 
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-secondary tracking-tight mb-4">
-                Nuestra Esencia
+                Nosotros
               </h2>
               <div className="w-24 h-1.5 bg-primary mx-auto rounded-full shadow-sm"></div>
             </div>

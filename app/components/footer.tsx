@@ -31,8 +31,8 @@ export default function Footer() {
             <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Enlaces Rápidos</h4>
             <ul className="space-y-3">
               <li><a href="/#inicio" className="text-complementary hover:text-white transition-colors text-sm">Inicio</a></li>
-              <li><a href="/#servicios" className="text-complementary hover:text-white transition-colors text-sm">Servicios IT</a></li>
-              <li><a href="/#nosotros" className="text-complementary hover:text-white transition-colors text-sm">Nuestra Esencia</a></li>
+              <li><a href="/#servicios" className="text-complementary hover:text-white transition-colors text-sm">Servicios</a></li>
+              <li><a href="/#nosotros" className="text-complementary hover:text-white transition-colors text-sm">Nosotros</a></li>
               <li><a href="/#casos" className="text-complementary hover:text-white transition-colors text-sm">Casos de Éxito</a></li>
               <li><a href="/productos" className="text-complementary hover:text-white transition-colors text-sm">Productos</a></li>
               <li><a href="https://osticket.frontuari.net" target="_blank" rel="noopener noreferrer" className="text-complementary hover:text-white transition-colors text-sm">Soporte</a></li>
