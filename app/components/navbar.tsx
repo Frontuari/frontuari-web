@@ -13,7 +13,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 sm:h-20 md:h-24 gap-4">
           <a
             href="/#inicio"
-            className="bg-white/95 hover:bg-white backdrop-blur-sm px-3.5 py-1.5 rounded-xl border border-slate-200/60 transition-all flex items-center shrink-0"
+            className="transition-transform hover:scale-105 flex items-center shrink-0"
           >
             <img
               decoding="async"
@@ -29,32 +29,35 @@ export default function Navbar() {
             <a href="/#nosotros" className="transition-colors text-sm uppercase tracking-wide text-black hover:text-primary transform hover:scale-105">Nosotros</a>
             <a href="/#casos" className="transition-colors text-sm uppercase tracking-wide text-black hover:text-primary transform hover:scale-105">Casos de Éxito</a>
             <a href="/productos" className="transition-colors text-sm uppercase tracking-wide text-black hover:text-primary transform hover:scale-105">Productos</a>
+            <a href="https://osticket.frontuari.net" target="_blank" rel="noopener noreferrer" className="transition-colors text-sm uppercase tracking-wide text-black hover:text-primary transform hover:scale-105">Soporte</a>
           </nav>
 
-          <div className="md:hidden">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-black p-2 focus:outline-none"
-              aria-expanded={isMenuOpen}
+          <div className="md:hidden flex items-center relative">
+            <input 
+              type="checkbox" 
+              id="mobile-menu-toggle" 
+              className="peer absolute inset-0 w-full h-full opacity-0 z-50 cursor-pointer m-0 p-0" 
               aria-label="Abrir menú de navegación"
-            >
-              {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
-            </button>
+            />
+            <div className="text-black p-2 pointer-events-none relative z-40">
+              <Menu size={28} className="block peer-checked:hidden" />
+              <X size={28} className="hidden peer-checked:block" />
+            </div>
+            
+            {/* CSS-only menu visibility */}
+            <div className="hidden peer-checked:block bg-slate-900 border-b border-white/10 absolute top-full right-[-24px] w-screen shadow-lg text-white z-40">
+              <div className="px-6 pt-4 pb-6 space-y-4 flex flex-col">
+                <a href="/#inicio" className="block text-slate-200 font-medium hover:text-white transition-colors">Inicio</a>
+                <a href="/#servicios" className="block text-slate-200 font-medium hover:text-white transition-colors">Servicios</a>
+                <a href="/#nosotros" className="block text-slate-200 font-medium hover:text-white transition-colors">Nosotros</a>
+                <a href="/#casos" className="block text-slate-200 font-medium hover:text-white transition-colors">Casos de Éxito</a>
+                <a href="/productos" className="block text-slate-200 font-medium hover:text-white transition-colors">Productos</a>
+                <a href="https://osticket.frontuari.net" target="_blank" rel="noopener noreferrer" className="block text-slate-200 font-medium hover:text-white transition-colors">Soporte</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
-      {isMenuOpen && (
-        <div className="md:hidden bg-slate-900 border-b border-white/10 absolute top-full left-0 w-full shadow-lg text-white">
-          <div className="px-6 pt-4 pb-6 space-y-4 flex flex-col">
-            <a href="/#inicio" onClick={() => setIsMenuOpen(false)} className="block text-slate-200 font-medium hover:text-white transition-colors">Inicio</a>
-            <a href="/#servicios" onClick={() => setIsMenuOpen(false)} className="block text-slate-200 font-medium hover:text-white transition-colors">Servicios</a>
-            <a href="/#nosotros" onClick={() => setIsMenuOpen(false)} className="block text-slate-200 font-medium hover:text-white transition-colors">Nosotros</a>
-            <a href="/#casos" onClick={() => setIsMenuOpen(false)} className="block text-slate-200 font-medium hover:text-white transition-colors">Casos de Éxito</a>
-            <a href="/productos" onClick={() => setIsMenuOpen(false)} className="block text-slate-200 font-medium hover:text-white transition-colors">Productos</a>
-          </div>
-        </div>
-      )}
     </header>
   );
 }

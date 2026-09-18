@@ -141,25 +141,40 @@ const cursorStyle = `
   .container:active {
     transform: scale(0.95);
   }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+
+  @keyframes wordSlide {
+    0%, 9% { transform: translateY(0); }
+    14%, 23% { transform: translateY(-1.2em); }
+    28%, 37% { transform: translateY(-2.4em); }
+    42%, 51% { transform: translateY(-3.6em); }
+    56%, 65% { transform: translateY(-4.8em); }
+    70%, 79% { transform: translateY(-6.0em); }
+    84%, 93% { transform: translateY(-7.2em); }
+    98%, 100% { transform: translateY(-8.4em); }
+  }
+  .animate-word-slide {
+    animation: wordSlide 18s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+  }
 `;
 
 function ServiceCard({
   card,
-  isVisible,
-  onClick,
 }: {
   card: { id: number; title: string; icon: any; image: any; description: string };
-  isVisible: boolean;
-  onClick: () => void;
 }) {
   const IconComponent = card.icon;
 
   return (
     <div
-      onClick={onClick}
-      className={`group cursor-pointer relative overflow-hidden rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-xl flex flex-col justify-between transition-all duration-200 ease-out select-none transform-gpu active:scale-[0.97] active:brightness-95 ${
-        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-      }`}
+      className={`group cursor-pointer relative overflow-hidden rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-xl flex flex-col justify-between transition-all duration-200 ease-out select-none transform-gpu active:scale-[0.97] active:brightness-95 opacity-100 translate-y-0 h-full`}
     >
       <div className="relative h-48 w-full overflow-hidden bg-gradient-to-b from-slate-50 to-white flex items-center justify-center p-6 border-b border-slate-100 pointer-events-none">
         <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -186,109 +201,41 @@ function ServiceCard({
   );
 }
 
-function TypewriterHeading({ text, speed = 55 }: { text: string; speed?: number }) {
-  const [displayedText, setDisplayedText] = useState('');
-
-  useEffect(() => {
-    let i = 0;
-    const timer = setInterval(() => {
-      if (i <= text.length) {
-        setDisplayedText(text.slice(0, i));
-        i++;
-      } else {
-        clearInterval(timer);
-      }
-    }, speed);
-
-    return () => clearInterval(timer);
-  }, [text, speed]);
-
+function TypewriterHeading({ text }: { text: string }) {
+  // Animación CSS simple de aparición para evitar bloqueos por JS
   return (
-    <span>
-      {displayedText}
-      <span className="inline-block w-[4px] h-[0.85em] bg-primary ml-1.5 animate-cursor-blink align-baseline rounded-full" />
+    <span className="animate-fade-in-up inline-block">
+      {text}
     </span>
   );
 }
 
-function RotatingTypewriter({
-  words,
-  typeSpeed = 80,
-  deleteSpeed = 40,
-  delayBetween = 2000,
-}: {
-  words: string[];
-  typeSpeed?: number;
-  deleteSpeed?: number;
-  delayBetween?: number;
-}) {
-  const [currentWordIndex, setCurrentWordIndex] = useState(0);
-  const [currentText, setCurrentText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  useEffect(() => {
-    const fullWord = words[currentWordIndex];
-
-    if (!isDeleting && currentText === fullWord) {
-      const timer = setTimeout(() => {
-        setIsDeleting(true);
-      }, delayBetween);
-      return () => clearTimeout(timer);
-    }
-
-    if (isDeleting && currentText === '') {
-      setIsDeleting(false);
-      let nextIndex;
-      do {
-        nextIndex = Math.floor(Math.random() * words.length);
-      } while (words.length > 1 && nextIndex === currentWordIndex);
-
-      setCurrentWordIndex(nextIndex);
-      return;
-    }
-
-    const speed = isDeleting ? deleteSpeed : typeSpeed;
-    const timer = setTimeout(() => {
-      setCurrentText((prev) =>
-        isDeleting
-          ? fullWord.slice(0, prev.length - 1)
-          : fullWord.slice(0, prev.length + 1)
-      );
-    }, speed);
-
-    return () => clearTimeout(timer);
-  }, [currentText, isDeleting, currentWordIndex, words, typeSpeed, deleteSpeed, delayBetween]);
+function RotatingTypewriter({ words }: { words: string[] }) {
+  // CSS-only word slider
+  // Find longest word to set container width
+  const longestWord = words.reduce((a, b) => a.length > b.length ? a : b, "");
 
   return (
-    <span className="text-primary font-black">
-      {currentText}
-      <span className="inline-block w-[3px] h-[0.85em] bg-primary ml-1 animate-cursor-blink align-baseline rounded-full" />
-    </span>
+    <div className="relative h-[1.2em] overflow-hidden text-primary font-black inline-block">
+      {/* Elemento invisible para dar el ancho correcto al contenedor */}
+      <span className="opacity-0 pointer-events-none whitespace-nowrap block h-[1.2em] select-none">
+        {longestWord}
+        <span className="inline-block w-[3px] h-[0.85em] bg-primary ml-1 rounded-full" />
+      </span>
+
+      <div className="animate-word-slide flex flex-col items-start absolute top-0 left-0">
+        {[...words, words[0]].map((word, i) => (
+          <span key={i} className="h-[1.2em] leading-[1.2em] whitespace-nowrap block">
+            {word}
+            <span className="inline-block w-[3px] h-[0.85em] bg-primary ml-1 animate-cursor-blink align-baseline rounded-full" />
+          </span>
+        ))}
+      </div>
+    </div>
   );
 }
 
 export default function FrontuariLanding() {
-  const [selectedCard, setSelectedCard] = useState<null | { id: number; title: string; image: any; gallery?: any[]; description: string; icon?: any }>(null);
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const [isServiciosVisible, setIsServiciosVisible] = useState(false);
-  const serviciosSectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsServiciosVisible(entry.isIntersecting);
-      },
-      { threshold: 0.65 }
-    );
-
-    if (serviciosSectionRef.current) {
-      observer.observe(serviciosSectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
   const heroWords = [
     "Innovación",
     "Desarrollo de Software",
@@ -302,10 +249,10 @@ export default function FrontuariLanding() {
   const serviceCards = [
     {
       id: 1,
-      title: 'iDempiere ERP',
+      title: 'Implementación y Soporte de iDempiere ERP',
       icon: Server,
       image: logoIdempiere,
-      description: 'Transforma la gestión de tu empresa con la potencia de iDempiere ERP. Centralizamos finanzas, inventario, ventas y cadena de suministro en una plataforma open-source de alto rendimiento. Diseñamos módulos a la medida, automatizamos tus procesos clave y te acompañamos con soporte especializado para escalar tu negocio sin límites.'
+      description: 'Transforma la gestión de tu empresa con la potencia de iDempiere ERP. Implementamos el sistema desde cero adaptándolo a tu flujo de negocio, centralizando finanzas, inventario, ventas y cadena de suministro en una plataforma open-source de alto rendimiento. Diseñamos módulos a la medida, automatizamos tus procesos clave, brindamos capacitación y te acompañamos con soporte especializado continuo para escalar tu negocio sin límites.'
     },
     {
       id: 2,
@@ -420,16 +367,13 @@ export default function FrontuariLanding() {
         {/* SERVICIOS SECTION */}
         <section
           id="servicios"
-          ref={serviciosSectionRef}
           className="relative py-16 sm:py-20 lg:py-28 bg-slate-50 overflow-hidden px-4 sm:px-6 lg:px-8"
         >
           <div className="absolute inset-0 bg-[radial-gradient(#94a3b8_2px,transparent_2px)] [background-size:32px_32px] opacity-25 pointer-events-none" />
           <div className="absolute top-0 right-1/4 w-96 h-96 bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
 
-          <div className="relative z-10 max-w-7xl mx-auto">
-            <div
-              className={`flex flex-col md:flex-row justify-between items-start md:items-end mb-12 sm:mb-16 transition-opacity duration-500 ease-in-out ${isServiciosVisible ? 'opacity-100' : 'opacity-0'}`}
-            >
+          <div className="relative max-w-7xl mx-auto">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 sm:mb-16">
               <div className="max-w-2xl">
                 <span className="text-primary font-bold text-xs uppercase tracking-widest bg-primary/10 px-3.5 py-1.5 rounded-full inline-block mb-3 border border-primary/15">
                   Especializaciones
@@ -446,15 +390,90 @@ export default function FrontuariLanding() {
             {/* Rejilla de Cards */}
             <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
               {serviceCards.map((card) => (
-                <ServiceCard
-                  key={card.id}
-                  card={card}
-                  isVisible={isServiciosVisible}
-                  onClick={() => {
-                    setSelectedCard(card);
-                    setCurrentSlide(0);
-                  }}
-                />
+                <div key={card.id}>
+                  <label htmlFor={`modal-toggle-${card.id}`} className="block h-full cursor-pointer">
+                    <ServiceCard card={card} />
+                  </label>
+
+                  <input type="checkbox" id={`modal-toggle-${card.id}`} className="peer hidden" />
+
+                  {/* Modal CSS-only (Solo abre en desktop) */}
+                  <div className="fixed inset-0 z-[100] hidden md:peer-checked:flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto">
+                    <div className="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl my-8 transform transition-all relative">
+                      <div className="relative w-full h-80 sm:h-[400px] bg-slate-900 flex items-center justify-center overflow-hidden">
+                        
+                        {/* Galerias o imagen única */}
+                        {card.gallery && card.gallery.length > 0 ? (
+                          <div className="flex overflow-x-auto snap-x snap-mandatory w-full h-full pb-2">
+                            {card.gallery.map((img, idx) => (
+                              <img
+                                key={idx}
+                                src={img.src}
+                                alt={`${card.title} - Captura ${idx + 1}`}
+                                className="snap-center w-full h-full object-contain flex-shrink-0"
+                              />
+                            ))}
+                          </div>
+                        ) : (
+                          <img
+                            src={card.image.src}
+                            alt={card.title}
+                            className="max-h-[80%] w-auto object-contain"
+                          />
+                        )}
+
+                        <label
+                          htmlFor={`modal-toggle-${card.id}`}
+                          className="absolute top-4 right-4 z-30 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors cursor-pointer"
+                          aria-label="Cerrar modal"
+                        >
+                          <X size={20} />
+                        </label>
+                      </div>
+
+                      <div className="p-6 sm:p-8 space-y-4 max-h-[50vh] overflow-y-auto">
+                        <h3 className="text-2xl font-bold text-secondary">
+                          {card.title}
+                        </h3>
+                        <p className="text-secondary/80 leading-relaxed text-sm sm:text-base whitespace-pre-line">
+                          {card.description}
+                        </p>
+
+                        <div className="pt-6 border-t border-complementary/10 flex items-center justify-between">
+                          {card.id === 2 ? (
+                            <div className="flex gap-2">
+                              <a
+                                href="https://play.google.com/store/apps/details?id=net.frontuari.salesforce.ftu&hl=es_419"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-primary hover:bg-primary-hover text-white px-4 py-2.5 rounded-lg font-bold text-sm transition-colors inline-flex items-center justify-center shadow-sm"
+                              >
+                                Ver Fuerza de Ventas
+                              </a>
+                              <a
+                                href="https://play.google.com/store/apps/details?id=net.frontuari.erpdocapproved&hl=es_419"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-lg font-bold text-sm transition-colors inline-flex items-center justify-center shadow-sm"
+                              >
+                                Ver DOC Approved
+                              </a>
+                            </div>
+                          ) : (
+                            <div />
+                          )}
+
+                          <label
+                            htmlFor={`modal-toggle-${card.id}`}
+                            className="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-colors cursor-pointer inline-block text-center"
+                          >
+                            Cerrar
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               ))}
             </div>
 
@@ -502,7 +521,6 @@ export default function FrontuariLanding() {
                   alt="Frontuari - Identidad y Fortaleza"
                   className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-500 ease-out"
                 />
-                <div className="absolute inset-0 ring-1 ring-black/5 rounded-xl"></div>
               </div>
 
               <div className="lg:col-span-7 space-y-4 sm:space-y-6">
@@ -601,122 +619,39 @@ export default function FrontuariLanding() {
 
           <EnterpriseLogosTicker logos={enterpriseLogos} />
         </section>
-      </main>
 
-      {/* MODAL SERVICIOS */}
-      {selectedCard && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 overflow-y-auto"
-          onClick={() => setSelectedCard(null)}
-        >
-          <div
-            className="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl my-8 transform transition-all"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="relative w-full h-80 sm:h-[400px] bg-slate-900 flex items-center justify-center overflow-hidden">
-              {selectedCard.gallery && selectedCard.gallery.length > 0 ? (
-                <>
-                  <img
-                    src={selectedCard.gallery[currentSlide].src}
-                    alt="Fondo Difuminado"
-                    className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-45 scale-110 pointer-events-none"
-                  />
-
-                  <img
-                    src={selectedCard.gallery[currentSlide].src}
-                    alt={`${selectedCard.title} - Captura ${currentSlide + 1}`}
-                    className="relative z-10 max-h-[88%] w-auto object-contain rounded-2xl shadow-2xl border border-white/20 transition-all duration-300"
-                  />
-
-                  {selectedCard.gallery.length > 1 && (
-                    <>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setCurrentSlide((prev) => (prev === 0 ? selectedCard.gallery!.length - 1 : prev - 1));
-                        }}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors"
-                        aria-label="Imagen anterior"
-                      >
-                        <ChevronLeft size={22} />
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setCurrentSlide((prev) => (prev === selectedCard.gallery!.length - 1 ? 0 : prev + 1));
-                        }}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 z-20 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors"
-                        aria-label="Siguiente imagen"
-                      >
-                        <ChevronRight size={22} />
-                      </button>
-
-                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex gap-2 bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-sm">
-                        {selectedCard.gallery.map((_, idx) => (
-                          <button
-                            key={idx}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setCurrentSlide(idx);
-                            }}
-                            className={`h-2 rounded-full transition-all ${currentSlide === idx ? 'bg-white w-5' : 'bg-white/50 w-2'}`}
-                            aria-label={`Ir a imagen ${idx + 1}`}
-                          />
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </>
-              ) : (
-                <img
-                  src={selectedCard.image.src}
-                  alt={selectedCard.title}
-                  className="max-h-[80%] w-auto object-contain"
-                />
-              )}
-
-              <button
-                onClick={() => setSelectedCard(null)}
-                className="absolute top-4 right-4 z-30 bg-black/50 hover:bg-black/80 text-white rounded-full p-2 transition-colors"
-                aria-label="Cerrar modal"
+        {/* PUBLICIDAD / LLAMADO A LA ACCIÓN */}
+        <section className="relative py-20 overflow-hidden bg-slate-950 border-t border-white/5">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05)_0,transparent_100%)] pointer-events-none"></div>
+          <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary opacity-10 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-primary opacity-10 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-6">
+              Lleva tu empresa al siguiente nivel con Frontuari
+            </h2>
+            <p className="text-slate-300 text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+              Descubre cómo nuestras soluciones tecnológicas y nuestro ERP pueden optimizar tus procesos, aumentar tu rentabilidad y asegurar el crecimiento de tu negocio de forma inteligente.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
+              <a
+                href="/productos"
+                className="bg-primary text-white hover:bg-primary-hover font-bold px-8 py-3.5 rounded-xl shadow-lg transition-transform transform hover:-translate-y-1"
               >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="p-6 sm:p-8 space-y-4 max-h-[50vh] overflow-y-auto">
-              <h3 className="text-2xl font-bold text-secondary">
-                {selectedCard.title}
-              </h3>
-              <p className="text-secondary/80 leading-relaxed text-sm sm:text-base whitespace-pre-line">
-                {selectedCard.description}
-              </p>
-
-              <div className="pt-6 border-t border-complementary/10 flex items-center justify-between">
-                {selectedCard.id === 2 ? (
-                  <a
-                    href="https://play.google.com/store/apps/collection/cluster?gsr=SnFqLEFTNFNDMi9GajFBSk96V2JiS1ppVVk4ckEvamFsb2RvbGZ0V0xWR212aGs9sgI9CiAKHG5ldC5mcm9udHVhcmkuc2FsZXNmb3JjZS5mdHUQBxIXCAESEzg2MDgxNDQzMDYzMDQyNzU2MTEYALASAA%3D%3D:S:ANO1ljKEez0&hl=es_VE"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-colors inline-flex items-center justify-center shadow-sm"
-                  >
-                    Ver
-                  </a>
-                ) : (
-                  <div />
-                )}
-
-                <button
-                  onClick={() => setSelectedCard(null)}
-                  className="bg-primary hover:bg-primary-hover text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-colors"
-                >
-                  Cerrar
-                </button>
-              </div>
+                Explorar Productos
+              </a>
+              <a
+                href="https://wa.me/584149739547?text=Hola,%20vengo%20de%20la%20p%C3%A1gina%20web%20de%20Frontuari%20y%20me%20gustar%C3%ADa%20obtener%20m%C3%A1s%20informaci%C3%B3n."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-transparent border-2 border-white text-white hover:bg-white/10 font-bold px-8 py-3.5 rounded-xl transition-colors"
+              >
+                Contáctanos ahora
+              </a>
             </div>
           </div>
-        </div>
-      )}
+        </section>
+      </main>
 
       {/* FOOTER */}
       <Footer />

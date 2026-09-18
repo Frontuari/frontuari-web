@@ -7,6 +7,8 @@ export const metadata: Metadata = {
     description: 'Transformamos procesos operativos mediante soluciones de software corporativo a medida. Escalabilidad y eficiencia estructural.',
 };
 
+import FloatingWhatsApp from './components/FloatingWhatsApp';
+
 export default function RootLayout({
     children,
 }: {
@@ -17,6 +19,7 @@ export default function RootLayout({
             {/* El body adopta las fuentes y colores base definidos en globals.css y tailwind.config */}
             <body className="antialiased">
                 {children}
+                <FloatingWhatsApp />
             </body>
         </html>
     );

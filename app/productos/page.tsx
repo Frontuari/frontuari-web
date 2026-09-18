@@ -8,8 +8,8 @@ import Image from 'next/image';
 
 
 import imgIdempiere from '../../assets/images/icons/idempiereLogo.png';
-import imgPlugins from '../assets/images/banner-plugins.png';
 import imgSalesforce from '../../assets/images/banners/appmovil/iconss2.png';
+import imgErpDoc from '../../assets/images/banners/appmovil/erpdoc2.jpeg' ;
 import imgPowerBI from '../../assets/images/banners/power-bi.webp';
 
 /* =========================================
@@ -17,10 +17,9 @@ import imgPowerBI from '../../assets/images/banners/power-bi.webp';
 ========================================= */
 interface TiltWrapperProps {
   children: React.ReactNode;
-  enableGlow?: boolean; // Prop para activar/desactivar la iluminación fácilmente
 }
 
-export const TiltWrapper = ({ children, enableGlow = false }: TiltWrapperProps) => {
+export const TiltWrapper = ({ children }: TiltWrapperProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -60,45 +59,63 @@ export const TiltWrapper = ({ children, enableGlow = false }: TiltWrapperProps) 
 const modules = [
   {
     id: 1,
-    title: 'Soporte y Consultoría iDempiere',
-    description: 'Gestión integral y optimización de arquitectura ERP para empresas en crecimiento.',
+    title: 'Implementación, Soporte y Consultoría iDempiere',
+    description: 'Gestión integral, implementación desde cero y puesta en marcha de la arquitectura ERP para empresas en crecimiento.',
     image: imgIdempiere,
     bullets: [
-      'Implementación de módulos financieros y logísticos.',
-      'Optimización de bases de datos y arquitectura ERP.',
-      'ERP Idempiere ERP Idempiere ERP Idempiere ERP Idempiere ERP Idempiere ERP Idempiere ERP Idempiere ERP Idempiere ERP Idempiere.'
+      'Implementación completa de iDempiere adaptada a los procesos de tu negocio.',
+      'Soporte técnico especializado y capacitación para el uso óptimo del sistema.',
+      'Consultoría estratégica para optimizar flujos de trabajo financieros y logísticos.',
+      'Sin costos de licenciamiento por usuario (100% Open Source).',
+      'Arquitectura Multi-Compañía, Multi-Organización, Multi-Moneda y Multi-Idioma.',
+      'Trazabilidad total, auditoría financiera y automatización con Workflows configurables.'
     ],
-    gradient: 'from-blue-600 to-[#24588D]',
     hasGlow: true 
   },
   {
     id: 2,
     title: 'Desarrollo de Plugins a Medida',
-    description: 'Extensión de funcionalidades nativas ajustadas a la lógica de tu negocio.',
+    description: 'Extensión de funcionalidades nativas ajustadas a la lógica de tu negocio, aprovechando toda la flexibilidad de iDempiere.',
     bullets: [
-      'Plugin 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ultricies sagittis ligula, eget dictum ligula congue et. Nam id bibendum nisl, vel vulputate odio. Aliquam vitae sem ante. Etiam et ultricies est, eu accumsan risus. Duis a dolor sit amet massa bibendum consectetur. Mauris nec arcu eget odio fringilla fermentum. Proin semper nunc non ornare lobortis. Proin cursus blandit sollicitudin..',
-      'Plugin 2: Soporte para texto largo y corto, hola',
-      'Plugin 3: Seis siete.'
+      'Agregado de un sistema openPosDelivery para optimizar pedidos y entregas.',
+      'Armado de regiones de ventas y gestión multisucursales para operaciones pesadas.',
+      'Adaptaciones a medida de bancos y generación de archivos TXT bancarios para tus necesidades.'
     ],
     image: imgIdempiere,
-    gradient: 'from-[#24588D] to-indigo-700',
     hasGlow: true
   },
   {
     id: 3,
     title: 'Aplicación Salesforce',
-    description: 'Six Seven.',
+    description: 'Nuestra plataforma de Fuerza de Ventas, orientada a la toma y gestión eficiente de pedidos en campo.',
     bullets: [
       'Funcionalidad online y offline mediante sincronización.',
-      'Registro de clientes, ventas y precios de productos en un solo lugar.',
-      'Mapeado de rutas de visita con mapa interactivo.'
+      'Registro de clientes Potenciales, ventas y precios de productos en un solo lugar.',
+      'Registra tus Ordenes y Cobros en un solo lugar.',
+      'Registra seguimieentos de tus visitas'
     ],
     image: imgSalesforce,
-    gradient: 'from-sky-500 to-[#24588D]',
-    hasGlow: false // Ejemplo desactivado
+    hasGlow: false,
+    objectFit: 'contain',
+    playStoreLink: 'https://play.google.com/store/apps/details?id=net.frontuari.salesforce.ftu&hl=es_419'
   },
   {
     id: 4,
+    title: 'DOC Approved',
+    description: 'Aplicación de Aprobación de Documentos, diseñada para agilizar flujos de trabajo y autorizar procesos de forma rápida y segura.',
+    bullets: [
+      'Agiliza flujos de trabajo.',
+      'Autoriza procesos de forma rápida y segura.',
+      'Conexión directa con tus operaciones centrales.'
+    ],
+
+    image: imgErpDoc,
+    hasGlow: false,
+    playStoreLink: 'https://play.google.com/store/apps/details?id=net.frontuari.erpdocapproved&hl=es_419'
+  },
+  {
+    objectFit: 'contain',
+    id: 5,
     title: 'Analítica Avanzada con Power BI',
     description: 'Visualización de datos clave e inteligencia de negocios en tiempo real.',
     bullets: [
@@ -106,8 +123,9 @@ const modules = [
       'Visualizaciones dinámicas en tiempo real.',
       'Modelado de KPIs estratégicos para toma de decisiones.'
     ],
+  
     image: imgPowerBI,
-    gradient: 'from-blue-400 to-[#24588D]',
+  
     hasGlow: true
   }
 ];
@@ -164,12 +182,10 @@ export default function ProductosTemplatePage() {
                   `}
                 >
 
-                  {/* CONTENEDOR TILT + LUMEN GLOW */}
+                  {/* CONTENEDOR TILT */}
                   <div className="w-full lg:w-5/12 h-64 sm:h-80 flex-shrink-0">
-                    <TiltWrapper enableGlow={module.hasGlow}>
-                      <div className={`w-full h-full rounded-2xl bg-gradient-to-br ${module.gradient} relative overflow-hidden flex items-center justify-center shadow-inner group`}>
-                        <div className="absolute inset-0 bg-black/10 mix-blend-overlay pointer-events-none z-10" />
-
+                    <TiltWrapper>
+                      <div className="w-full h-full rounded-2xl bg-transparent relative overflow-hidden flex items-center justify-center group">
                         {/* RENDERIZADO DE LA IMAGEN */}
                         {module.image ? (
                           <Image
@@ -178,11 +194,11 @@ export default function ProductosTemplatePage() {
                             fill
                             unoptimized
                             draggable={false}
-                            className="object-cover transition-transform duration-300 group-hover:scale-105 pointer-events-none select-none"
+                            className={`transition-transform duration-300 group-hover:scale-105 pointer-events-none select-none ${(module as any).objectFit === 'contain' ? 'object-contain p-4' : 'object-cover'}`}
                           />
                         ) : (
                           <div className="relative z-10 transform-gpu translate-z-[50px]">
-                            {module.icon}
+                            {(module as any).icon}
                           </div>
                         )}
                       </div>
@@ -211,11 +227,17 @@ export default function ProductosTemplatePage() {
                       </ul>
                     </div>
 
-                    <div className="pt-6 mt-6 border-t border-slate-100">
-                      <button className="flex items-center gap-2 text-sm font-bold text-[#24588D] bg-[#24588D]/5 hover:bg-[#24588D]/10 px-5 py-2.5 rounded-lg transition-colors">
+                    <div className="pt-6 mt-6 border-t border-slate-100 flex flex-wrap gap-4">
+
+                      {/* <button className="flex items-center gap-2 text-sm font-bold text-[#24588D] bg-[#24588D]/5 hover:bg-[#24588D]/10 px-5 py-2.5 rounded-lg transition-colors">
                         MÁS INFORMACIÓN
                         <ChevronRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                      </button>
+                      </button> */}
+                      {(module as any).playStoreLink && (
+                        <a href={(module as any).playStoreLink} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm font-bold text-white bg-[#24588D] hover:bg-[#1a426b] px-5 py-2.5 rounded-lg transition-colors shadow-sm hover:shadow-md">
+                          Ver en Google Play
+                        </a>
+                      )}
                     </div>
                   </div>
 
